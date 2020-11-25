@@ -3,7 +3,7 @@ package service
 import (
 	"errors"
 	"golang.org/x/crypto/bcrypt"
-	
+
 	"superTools-background/internal/dao"
 	"superTools-background/pkg/idGenerator"
 )

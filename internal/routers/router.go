@@ -9,11 +9,10 @@ import (
 	"superTools-background/internal/dao"
 	"superTools-background/internal/middleware"
 	"superTools-background/internal/routers/api"
-	"superTools-background/internal/routers/api/sd"
-	"superTools-background/internal/routers/api/v1/bedtimeStory"
-	"superTools-background/internal/routers/api/v1/mall"
-	"superTools-background/internal/routers/api/v1/tools"
-	"superTools-background/internal/routers/api/v1/user"
+	"superTools-background/internal/routers/bedtimeStory"
+	"superTools-background/internal/routers/mall"
+	"superTools-background/internal/routers/sd"
+	"superTools-background/internal/routers/user"
 	"superTools-background/internal/service"
 	"superTools-background/pkg/limiter"
 
@@ -65,12 +64,6 @@ func NewRouter() *gin.Engine {
 	RegisterController(r, BEDTIME, global.DBEngine)
 	RegisterController(r, PRODUCT, global.DBEngine)
 	RegisterController(r, ORDER, global.DBEngine)
-
-	tool := r.Group("api/v1")
-	{
-		tool.GET("/morse", tools.GetMorse)
-		tool.GET("/qrcode", tools.GetQRcode)
-	}
 
 	return r
 }
