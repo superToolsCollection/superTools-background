@@ -76,7 +76,7 @@ func init() {
 	}
 }
 
-// @title superTools
+// @title superTools后台
 // @version 1.0
 // @description 超级工具合集
 // @Github https://github.com/superToolsCollection
