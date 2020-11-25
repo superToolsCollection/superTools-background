@@ -8,8 +8,8 @@ import (
 	"path"
 	"strings"
 
-	"superTools-backend/global"
-	"superTools-backend/pkg/util"
+	"superTools-background/global"
+	"superTools-background/pkg/util"
 )
 
 /**

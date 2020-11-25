@@ -2,9 +2,9 @@ package dao
 
 import (
 	"strings"
-	"superTools-backend/global"
-	"superTools-backend/pkg/db"
-	"superTools-backend/pkg/setting"
+	"superTools-background/global"
+	"superTools-background/pkg/db"
+	"superTools-background/pkg/setting"
 	"testing"
 )
 

@@ -429,37 +429,31 @@ paths:
       - mall
     post:
       parameters:
-      - description: 订单id
+      - description: 用户名
         in: body
-        name: id
+        name: user_name
         required: true
         schema:
-          type: integer
-      - description: 用户id
+          type: string
+      - description: 密码
         in: body
-        name: user_id
+        name: password
         required: true
         schema:
-          type: integer
-      - description: 商品id
+          type: string
+      - description: 昵称
         in: body
-        name: product_id
+        name: nick_name
         required: true
         schema:
-          type: integer
-      - description: 订单状态
-        in: body
-        name: state
-        required: true
-        schema:
-          type: integer
+          type: string
       produces:
       - application/json
       responses:
         "200":
-          description: "1"
+          description: userID
           schema:
-            $ref: '#/definitions/int'
+            $ref: '#/definitions/string'
         "400":
           description: 请求错误
           schema:
@@ -468,35 +462,35 @@ paths:
           description: 内部错误
           schema:
             $ref: '#/definitions/errcode.Error'
-      summary: 新增订单
+      summary: 用户注册
       tags:
-      - mall
+      - user
     put:
       parameters:
-      - description: 订单id
+      - description: 用户id
         in: body
         name: id
         required: true
         schema:
-          type: integer
-      - description: 用户id
+          type: string
+      - description: 用户名
         in: body
-        name: user_id
+        name: user_name
         required: true
         schema:
-          type: integer
-      - description: 商品id
+          type: string
+      - description: 密码
         in: body
-        name: product_id
+        name: password
         required: true
         schema:
-          type: integer
-      - description: 订单状态
+          type: string
+      - description: 昵称
         in: body
-        name: state
+        name: nick_name
         required: true
         schema:
-          type: integer
+          type: string
       produces:
       - application/json
       responses:
@@ -512,9 +506,9 @@ paths:
           description: 内部错误
           schema:
             $ref: '#/definitions/errcode.Error'
-      summary: 更新订单
+      summary: 更新用户信息
       tags:
-      - mall
+      - user
   /api/v1/mall/orders/{id}:
     delete:
       parameters:

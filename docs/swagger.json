@@ -476,44 +476,44 @@
                     "application/json"
                 ],
                 "tags": [
-                    "mall"
+                    "user"
                 ],
-                "summary": "更新订单",
+                "summary": "更新用户信息",
                 "parameters": [
                     {
-                        "description": "订单id",
+                        "description": "用户id",
                         "name": "id",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
-                        "description": "用户id",
-                        "name": "user_id",
+                        "description": "用户名",
+                        "name": "user_name",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
-                        "description": "商品id",
-                        "name": "product_id",
+                        "description": "密码",
+                        "name": "password",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
-                        "description": "订单状态",
-                        "name": "state",
+                        "description": "昵称",
+                        "name": "nick_name",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],
@@ -543,52 +543,43 @@
                     "application/json"
                 ],
                 "tags": [
-                    "mall"
+                    "user"
                 ],
-                "summary": "新增订单",
+                "summary": "用户注册",
                 "parameters": [
                     {
-                        "description": "订单id",
-                        "name": "id",
+                        "description": "用户名",
+                        "name": "user_name",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
-                        "description": "用户id",
-                        "name": "user_id",
+                        "description": "密码",
+                        "name": "password",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
-                        "description": "商品id",
-                        "name": "product_id",
+                        "description": "昵称",
+                        "name": "nick_name",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "订单状态",
-                        "name": "state",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "1",
+                        "description": "userID",
                         "schema": {
-                            "$ref": "#/definitions/int"
+                            "$ref": "#/definitions/string"
                         }
                     },
                     "400": {
