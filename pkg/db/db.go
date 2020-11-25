@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"superTools-background/global"
 	"superTools-background/pkg/otgorm"
 	"superTools-background/pkg/setting"
 
@@ -37,9 +36,9 @@ func NewDBEngine(databaseSetting *setting.DatabaseSettingS) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	if global.ServerSetting.RunMode == "debug" {
-		db.LogMode(true)
-	}
+	//if global.ServerSetting.RunMode == "debug" {
+	//	db.LogMode(true)
+	//}
 	db.SingularTable(true)
 	db.Callback().Create().Replace("gorm:update_time_stamp", updateTimeStampForCreateCallback)
 	db.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
@@ -56,10 +55,12 @@ func updateTimeStampForCreateCallback(scope *gorm.Scope) {
 		nowTime := time.Now().Format("2006-01-02 15:04:05")
 
 		if createTimeField, ok := scope.FieldByName("CreatedOn"); ok {
+			fmt.Println(createTimeField, ok, "okok")
 			if createTimeField.IsBlank {
 				_ = createTimeField.Set(nowTime)
 			}
 		}
+		fmt.Println("okokok")
 
 		if modifyTimeField, ok := scope.FieldByName("ModifiedOn"); ok {
 			if modifyTimeField.IsBlank {
