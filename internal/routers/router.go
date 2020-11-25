@@ -2,6 +2,7 @@ package routers
 
 import (
 	"net/http"
+	"superTools-background/internal/routers/tools"
 	"time"
 
 	_ "superTools-background/docs"
@@ -64,6 +65,7 @@ func NewRouter() *gin.Engine {
 	RegisterController(r, BEDTIME, global.DBEngine)
 	RegisterController(r, PRODUCT, global.DBEngine)
 	RegisterController(r, ORDER, global.DBEngine)
+	RegisterController(r, TOOLS, global.DBEngine)
 
 	return r
 }
@@ -80,6 +82,8 @@ func RegisterController(r *gin.Engine, name string, db *gorm.DB) {
 		registerBedtime(r, db)
 	case HEALTH:
 		registerHealth(r, db)
+	case TOOLS:
+		registerTool(r, db)
 	}
 }
 
@@ -160,5 +164,23 @@ func registerProduct(r *gin.Engine, db *gorm.DB) {
 		g.POST("/products", productController.Insert)
 		g.DELETE("/products", productController.Delete)
 		g.PUT("/products", productController.Update)
+	}
+}
+
+func registerTool(r *gin.Engine, db *gorm.DB) {
+	toolproductManager := dao.NewToolManager("tools", db)
+	toolService := service.NewToolService(toolproductManager)
+	toolController := tools.NewToolController(toolService)
+
+	g := r.Group("/api/v1/tools")
+	{
+		g.POST("/addTool", toolController.AddTool)
+		g.PUT("/update", toolController.UpdateToolInfo)
+		g.DELETE("/delete", toolController.DeleteTool)
+		g.PUT("/toolOnLine", toolController.ToolOnLine)
+		g.PUT("/toolOffLine", toolController.ToolOffLine)
+		g.GET("/getTool", toolController.GetToolByKey)
+		g.GET("/getToolByName", toolController.GetToolByName)
+		g.GET("/toolList", toolController.GetToolList)
 	}
 }
