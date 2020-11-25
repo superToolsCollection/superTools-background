@@ -3,7 +3,7 @@ package cache
 import (
 	"github.com/garyburd/redigo/redis"
 
-	"superTools-backend/pkg/setting"
+	"superTools-background/pkg/setting"
 
 	"time"
 )

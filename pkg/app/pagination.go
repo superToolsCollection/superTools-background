@@ -3,8 +3,8 @@ package app
 import (
 	"github.com/gin-gonic/gin"
 
-	"superTools-backend/global"
-	"superTools-backend/pkg/convert"
+	"superTools-background/global"
+	"superTools-background/pkg/convert"
 )
 
 /**

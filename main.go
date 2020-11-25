@@ -10,14 +10,14 @@ import (
 	"strings"
 	"time"
 
-	"superTools-backend/global"
-	"superTools-backend/internal/routers"
-	"superTools-backend/pkg/cache"
-	"superTools-backend/pkg/db"
-	"superTools-backend/pkg/idGenerator"
-	"superTools-backend/pkg/logger"
-	"superTools-backend/pkg/setting"
-	"superTools-backend/pkg/tracer"
+	"superTools-background/global"
+	"superTools-background/internal/routers"
+	"superTools-background/pkg/cache"
+	"superTools-background/pkg/db"
+	"superTools-background/pkg/idGenerator"
+	"superTools-background/pkg/logger"
+	"superTools-background/pkg/setting"
+	"superTools-background/pkg/tracer"
 
 	"gopkg.in/natefinch/lumberjack.v2"
 )

@@ -1,7 +1,7 @@
 package util
 
 import (
-	"superTools-backend/pkg"
+	"superTools-background/pkg"
 	"testing"
 )
 

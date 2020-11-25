@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"superTools-backend/global"
-	"superTools-backend/pkg/otgorm"
-	"superTools-backend/pkg/setting"
+	"superTools-background/global"
+	"superTools-background/pkg/otgorm"
+	"superTools-background/pkg/setting"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"

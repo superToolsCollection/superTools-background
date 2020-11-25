@@ -3,8 +3,8 @@ package app
 import (
 	"github.com/dgrijalva/jwt-go"
 
-	"superTools-backend/global"
-	"superTools-backend/pkg/util"
+	"superTools-background/global"
+	"superTools-background/pkg/util"
 
 	"time"
 )

@@ -5,8 +5,8 @@ import (
 	"mime/multipart"
 	"os"
 
-	"superTools-backend/global"
-	"superTools-backend/pkg/upload"
+	"superTools-background/global"
+	"superTools-background/pkg/upload"
 )
 
 /**

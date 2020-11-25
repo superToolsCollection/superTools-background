@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 
-	"superTools-backend/global"
-	"superTools-backend/internal/dao"
-	"superTools-backend/pkg/otgorm"
+	"superTools-background/global"
+	"superTools-background/internal/dao"
+	"superTools-background/pkg/otgorm"
 )
 
 /**

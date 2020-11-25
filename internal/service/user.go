@@ -4,8 +4,8 @@ import (
 	"errors"
 	"golang.org/x/crypto/bcrypt"
 	
-	"superTools-backend/internal/dao"
-	"superTools-backend/pkg/idGenerator"
+	"superTools-background/internal/dao"
+	"superTools-background/pkg/idGenerator"
 )
 
 /**

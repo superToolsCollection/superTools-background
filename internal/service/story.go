@@ -1,10 +1,10 @@
 package service
 
 import (
-	"superTools-backend/internal/dao"
-	"superTools-backend/internal/model"
-	"superTools-backend/pkg/app"
-	"superTools-backend/pkg/util"
+	"superTools-background/internal/dao"
+	"superTools-background/internal/model"
+	"superTools-background/pkg/app"
+	"superTools-background/pkg/util"
 )
 
 /**

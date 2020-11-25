@@ -3,8 +3,8 @@ package service
 import (
 	"fmt"
 
-	"superTools-backend/internal/dao"
-	"superTools-backend/pkg/app"
+	"superTools-background/internal/dao"
+	"superTools-background/pkg/app"
 )
 
 /**

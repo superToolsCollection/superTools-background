@@ -3,10 +3,10 @@ package user
 import (
 	"github.com/gin-gonic/gin"
 
-	"superTools-backend/global"
-	"superTools-backend/internal/service"
-	"superTools-backend/pkg/app"
-	"superTools-backend/pkg/errcode"
+	"superTools-background/global"
+	"superTools-background/internal/service"
+	"superTools-background/pkg/app"
+	"superTools-background/pkg/errcode"
 )
 
 /**

@@ -6,11 +6,11 @@ import (
 	"strings"
 	"testing"
 
-	"superTools-backend/global"
-	"superTools-backend/internal/dao"
-	"superTools-backend/pkg/app"
-	"superTools-backend/pkg/db"
-	"superTools-backend/pkg/setting"
+	"superTools-background/global"
+	"superTools-background/internal/dao"
+	"superTools-background/pkg/app"
+	"superTools-background/pkg/db"
+	"superTools-background/pkg/setting"
 
 )
 

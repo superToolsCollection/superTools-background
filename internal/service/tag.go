@@ -1,8 +1,8 @@
 package service
 
 import (
-	"superTools-backend/internal/model"
-	"superTools-backend/pkg/app"
+	"superTools-background/internal/model"
+	"superTools-background/pkg/app"
 )
 
 /**
