@@ -10,7 +10,7 @@ type Tool struct {
 	*Model
 	APIDescribe string `gorm:"column:api_describe" json:"api_describe"`
 	Name        string `gorm:"column:name" json:"name"`
-	State       int    `gorm:"column:state" json:"state"`
+	State       int    `gorm:"column:state;force" json:"state"`
 	API         string `gorm:"column:api" json:"api"`
 }
 

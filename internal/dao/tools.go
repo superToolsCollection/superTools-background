@@ -81,7 +81,7 @@ func (m *ToolManager) Update(tool *Tool) error {
 	}
 	fmt.Println("update", t.Name, t.State, t.ID)
 	result := m.conn.Model(t).Where("id=?", t.ID).Updates(t)
-	if result.RowsAffected == int64(0) {
+	if result.Error != nil{
 		return errors.New(fmt.Sprintf("update error: %v", result.Error.Error()))
 	}
 	return nil
