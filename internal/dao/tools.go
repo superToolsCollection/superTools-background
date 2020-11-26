@@ -29,7 +29,7 @@ type Tool struct {
 
 type ITool interface {
 	Insert(tool *Tool) (string, error)
-	Delete(id string) bool
+	Delete(id string) error
 	Update(tool *Tool) error
 	SelectByKey(id string) (*model.Tool, error)
 	SelectAll() ([]*model.Tool, error)
@@ -55,17 +55,17 @@ func (m *ToolManager) Insert(tool *Tool) (string, error) {
 	}
 	result := m.conn.Create(t)
 	if result.RowsAffected == int64(0) {
-		return "", errors.New("insert error")
+		return "", errors.New(fmt.Sprintf("dao.insertTool err: %v", result.Error.Error()))
 	}
 	return t.ID, nil
 }
 
-func (m *ToolManager) Delete(id string) bool {
+func (m *ToolManager) Delete(id string) error {
 	result := m.conn.Where("id=?", id).Delete(model.Tool{})
 	if result.RowsAffected == int64(0) {
-		return false
+		return errors.New(fmt.Sprintf("delete error: %v", result.Error.Error()))
 	}
-	return true
+	return  nil
 }
 
 func (m *ToolManager) Update(tool *Tool) error {
@@ -82,7 +82,7 @@ func (m *ToolManager) Update(tool *Tool) error {
 	fmt.Println("update", t.Name, t.State, t.ID)
 	result := m.conn.Model(t).Where("id=?", t.ID).Updates(t)
 	if result.RowsAffected == int64(0) {
-		return errors.New("update error")
+		return errors.New(fmt.Sprintf("update error: %v", result.Error.Error()))
 	}
 	return nil
 }
@@ -91,7 +91,7 @@ func (m *ToolManager) SelectByKey(id string) (*model.Tool, error) {
 	t := &model.Tool{}
 	result := m.conn.Where("id=?", id).Find(t)
 	if result.RecordNotFound() {
-		return nil, errors.New("wrong id")
+		return nil, errors.New(fmt.Sprintf("SelectByKey error: %v", result.Error.Error()))
 	}
 	return t, nil
 }
@@ -108,7 +108,7 @@ func (m *ToolManager) SelectByName(name string) (*model.Tool, error) {
 	t := &model.Tool{}
 	result := m.conn.Where("name=?", name).Find(t)
 	if result.RecordNotFound() {
-		return nil, errors.New("wrong name")
+		return nil, errors.New(fmt.Sprintf("SelectByName error: %v", result.Error.Error()))
 	}
 	return t, nil
 }

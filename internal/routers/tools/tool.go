@@ -104,9 +104,9 @@ func (t ToolController) DeleteTool(c *gin.Context) {
 		return
 	}
 
-	isOk := t.ToolService.DeleteTool(&param)
-	if !isOk {
-		global.Logger.Errorf(c, "svc.DeleteTool err: %v", isOk)
+	err := t.ToolService.DeleteTool(&param)
+	if err != nil {
+		global.Logger.Errorf(c, "svc.DeleteTool err: %v", err)
 		response.ToErrorResponse(errcode.ErrorDeleteToolFail)
 		return
 	}

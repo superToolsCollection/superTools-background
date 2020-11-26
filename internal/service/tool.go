@@ -62,7 +62,7 @@ type Tool struct {
 type IToolService interface {
 	AddTool(param *AddToolRequest) (string, error)
 	UpdateToolInfo(param *UpdateToolRequest) error
-	DeleteTool(param *DeleteToolRequest) bool
+	DeleteTool(param *DeleteToolRequest) error
 	ToolOnLine(param *ToolOnLineRequest) error
 	ToolOffLine(param *ToolOffLineRequest) error
 	GetToolByKey(param *GetToolByKeyRequest) (*Tool, error)
@@ -101,7 +101,7 @@ func (s *ToolService) UpdateToolInfo(param *UpdateToolRequest) error {
 	return s.toolDao.Update(tool)
 }
 
-func (s *ToolService) DeleteTool(param *DeleteToolRequest) bool {
+func (s *ToolService) DeleteTool(param *DeleteToolRequest) error {
 	return s.toolDao.Delete(param.ID)
 }
 
