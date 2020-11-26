@@ -123,7 +123,6 @@ func pingServer() error {
 		if err == nil && resp.StatusCode == 200 {
 			return nil
 		}
-
 		// Sleep for a second to continue the next ping.
 		global.Logger.Info(context.Background(), "Waiting for the server, retry in 1 second.")
 	}
@@ -216,7 +215,6 @@ func setupLogger() error {
 		MaxAge:    10,
 		LocalTime: true,
 	}, "", log.LstdFlags).WithCaller(2)
-
 	return nil
 }
 

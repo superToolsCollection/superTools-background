@@ -8,7 +8,6 @@ package model
 
 type Tool struct {
 	*Model
-	ID          string `gorm:"column:id;primary_key" json:"id"`
 	APIDescribe string `gorm:"column:api_describe" json:"api_describe"`
 	Name        string `gorm:"column:name" json:"name"`
 	State       int    `gorm:"column:state" json:"state"`

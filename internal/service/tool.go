@@ -20,10 +20,10 @@ type AddToolRequest struct {
 
 type UpdateToolRequest struct {
 	ID          string `form:"id" binding:"required,min=2,max=4294967295"`
-	Name        string `form:"user_id" binding:"required,min=2,max=4294967295"`
-	ModifiedBy  string `form:"user_id" binding:"required,min=2,max=4294967295"`
-	API         string `form:"product_id" binding:"required,min=2,max=4294967295"`
-	APIDescribe string `form:"product_id" binding:"required,min=2,max=4294967295"`
+	Name        string `form:"name" binding:"required,min=2,max=4294967295"`
+	ModifiedBy  string `form:"modified_by" binding:"required,min=2,max=4294967295"`
+	API         string `form:"api" binding:"required,min=2,max=4294967295"`
+	APIDescribe string `form:"api_describe" binding:"required,min=2,max=4294967295"`
 }
 
 type DeleteToolRequest struct {
@@ -150,7 +150,7 @@ func (s *ToolService) GetToolByKey(param *GetToolByKeyRequest) (*Tool, error) {
 }
 
 func (s *ToolService) GetToolByName(param *GetToolByNameRequest) (*Tool, error) {
-	result, err := s.toolDao.SelectByKey(param.Name)
+	result, err := s.toolDao.SelectByName(param.Name)
 	if err != nil {
 		return nil, err
 	}

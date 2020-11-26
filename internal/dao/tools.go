@@ -2,6 +2,7 @@ package dao
 
 import (
 	"errors"
+	"fmt"
 	"github.com/jinzhu/gorm"
 	"superTools-background/internal/model"
 	"superTools-background/pkg/app"
@@ -44,9 +45,9 @@ type ToolManager struct {
 func (m *ToolManager) Insert(tool *Tool) (string, error) {
 	t := &model.Tool{
 		Model: &model.Model{
+			ID:        tool.ID,
 			CreatedBy: tool.CreatedBy,
 		},
-		ID:          tool.ID,
 		APIDescribe: tool.APIDescribe,
 		Name:        tool.Name,
 		State:       tool.State,
@@ -70,17 +71,18 @@ func (m *ToolManager) Delete(id string) bool {
 func (m *ToolManager) Update(tool *Tool) error {
 	t := &model.Tool{
 		Model: &model.Model{
+			ID:         tool.ID,
 			ModifiedBy: tool.ModifiedBy,
 		},
-		ID:          tool.ID,
 		APIDescribe: tool.APIDescribe,
 		Name:        tool.Name,
 		State:       tool.State,
 		API:         tool.API,
 	}
+	fmt.Println("update", t.Name, t.State, t.ID)
 	result := m.conn.Model(t).Where("id=?", t.ID).Updates(t)
 	if result.RowsAffected == int64(0) {
-		return errors.New("insert error")
+		return errors.New("update error")
 	}
 	return nil
 }
@@ -106,7 +108,7 @@ func (m *ToolManager) SelectByName(name string) (*model.Tool, error) {
 	t := &model.Tool{}
 	result := m.conn.Where("name=?", name).Find(t)
 	if result.RecordNotFound() {
-		return nil, errors.New("wrong id")
+		return nil, errors.New("wrong name")
 	}
 	return t, nil
 }
@@ -117,28 +119,9 @@ func (m *ToolManager) SelectList(page, pageSize int) ([]*model.Tool, error) {
 		pageOffset = 0
 		pageSize = 5
 	}
-	fields := []string{"id", "name", "api", "api_describe", "created_on", "created_by", "modified_on", "modified_by", "state"}
-	rows, err := m.conn.Offset(pageOffset).Limit(pageSize).Select(fields).Table(m.table).Rows()
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
 	var tools []*model.Tool
-	for rows.Next() {
-		tool := &model.Tool{}
-		if err := rows.Scan(&tool.ID,
-			&tool.Name,
-			&tool.API,
-			&tool.APIDescribe,
-			&tool.CreatedOn,
-			&tool.CreatedBy,
-			&tool.ModifiedOn,
-			&tool.ModifiedBy,
-			&tool.State); err != nil {
-			return nil, err
-		}
-		tools = append(tools, tool)
+	if err := m.conn.Offset(pageOffset).Limit(pageSize).Find(&tools).Error; err != nil {
+		return nil, err
 	}
 	return tools, nil
 }
