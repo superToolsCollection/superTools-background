@@ -18,8 +18,8 @@ type RabbitMQ struct {
 }
 
 var (
-	DBEngine    *gorm.DB
-	RedisEngine *redis.Pool
+	DBEngine       *gorm.DB
+	RedisEngine    *redis.Pool
 	RabbitMQEngine *RabbitMQ
 	ElasticEngine  *elastic.Client
 )
