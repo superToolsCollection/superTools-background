@@ -3,6 +3,8 @@ package global
 import (
 	"github.com/garyburd/redigo/redis"
 	"github.com/jinzhu/gorm"
+	"github.com/olivere/elastic/v7"
+	"github.com/streadway/amqp"
 )
 
 /**
@@ -10,10 +12,14 @@ import (
 * @Date: 2020-09-18 08:51
 * @Description: 全局配置DB
 **/
+type RabbitMQ struct {
+	Conn    *amqp.Connection
+	Channel *amqp.Channel
+}
 
 var (
 	DBEngine    *gorm.DB
 	RedisEngine *redis.Pool
-	//todo: xiugai rabbitmq
-	RabbitMQEngine *redis.Pool
+	RabbitMQEngine *RabbitMQ
+	ElasticEngine  *elastic.Client
 )

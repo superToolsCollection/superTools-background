@@ -90,6 +90,7 @@ func RegisterController(r *gin.Engine, name string, db *gorm.DB) {
 func registerHealth(r *gin.Engine, db *gorm.DB) {
 	// The health check handlers
 	svcd := r.Group("/sd")
+	r.Use(middleware.JWT())
 	{
 		svcd.GET("/health", sd.HealthCheck)
 		svcd.GET("/disk", sd.DiskCheck)

@@ -33,7 +33,6 @@ func NewUserController(userService service.IUserService) UserController {
 // @Failure 500 {object} errcode.Error "内部错误"
 // @Router /api/v1/user/signin [post]
 func (u UserController) SignIn(c *gin.Context) {
-	//todo:cookie与session设置
 	param := service.UserSignInRequest{}
 	response := app.NewResponse(c)
 	valid, errs := app.BindAndValid(c, &param)

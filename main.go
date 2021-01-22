@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"superTools-background/pkg/elastic"
+	"superTools-background/pkg/mq"
 	"time"
 
 	"superTools-background/global"
@@ -64,6 +66,11 @@ func init() {
 	err = setupRabbitMQEngine()
 	if err != nil {
 		log.Printf("init setupRabbitMQEngine err: %v\n", err)
+	}
+	//初始化elastic
+	err = setupElasticEngine()
+	if err != nil {
+		log.Printf("init setupElasticEngine err: %v\n", err)
 	}
 	//初始化追踪
 	err = setupTracer()
@@ -154,6 +161,10 @@ func setupSetting() error {
 	if err != nil {
 		return err
 	}
+	err = newSetting.ReadSection("Elastic", &global.ElasticSetting)
+	if err != nil {
+		return err
+	}
 	err = newSetting.ReadSection("JWT", &global.JWTSetting)
 	if err != nil {
 		return err
@@ -196,10 +207,18 @@ func setupCacheEngine() error {
 	return nil
 }
 
-//todo:添加rabbitmq初始化
 func setupRabbitMQEngine() error {
 	var err error
-	global.RedisEngine, err = cache.NewRedisEngine(global.CacheSetting)
+	global.RabbitMQEngine, err = mq.NewRabbitMQEngine(global.RabbitMQSetting)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func setupElasticEngine() error {
+	var err error
+	global.ElasticEngine, err = elastic.NewElasticEngine(global.ElasticSetting)
 	if err != nil {
 		return err
 	}
