@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"go.opencensus.io/tag"
 	"net/http"
 	"superTools-background/internal/routers/tools"
 	"time"
@@ -102,24 +103,29 @@ func registerHealth(r *gin.Engine, db *gorm.DB) {
 }
 
 func registerBedtime(r *gin.Engine, db *gorm.DB) {
-	story := bedtimeStory.NewStory()
-	tag := bedtimeStory.NewTag()
+	storyManager := dao.NewStoryManager("stories", db)
+	tagManager := dao.NewTagManager("tags", db)
+	storyTagManager := dao.NewStoryTagManager("story_tag_map", db)
+	storyService := service.NewStoryService(storyManager, tagManager, storyTagManager)
+	storyController := bedtimeStory.NewStoryController(storyService)
+
 	bedtime := r.Group("/api/v1/bedtime")
-	bedtime.GET("/stories_only/:id", story.GetOnly)
 	bedtime.Use(middleware.JWT())
 	{
-		bedtime.POST("/tags", tag.Create)
-		bedtime.DELETE("/tags/:id", tag.Delete)
-		bedtime.PUT("/tags/:id", tag.Update)
-		bedtime.PATCH("/tags/:id/state", tag.Update)
-		bedtime.GET("/tags", tag.List)
+		//bedtime.POST("/tags", tag.Create)
+		//bedtime.DELETE("/tags/:id", tag.Delete)
+		//bedtime.PUT("/tags/:id", tag.Update)
+		//bedtime.PATCH("/tags/:id/state", tag.Update)
+		//bedtime.GET("/tags", tag.List)
+		//
+		//bedtime.POST("/stories", story.Create)
+		//bedtime.DELETE("/stories/:id", story.Delete)
+		//bedtime.PUT("/stories/:id", story.Update)
+		//bedtime.PATCH("/stories/:id/state", story.Update)
+		//bedtime.GET("stories/:id", story.Get)
+		//bedtime.GET("/stories", story.List)
 
-		bedtime.POST("/stories", story.Create)
-		bedtime.DELETE("/stories/:id", story.Delete)
-		bedtime.PUT("/stories/:id", story.Update)
-		bedtime.PATCH("/stories/:id/state", story.Update)
-		bedtime.GET("stories/:id", story.Get)
-		bedtime.GET("/stories", story.List)
+		bedtime.GET("/story", storyController.Get)
 	}
 }
 

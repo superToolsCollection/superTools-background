@@ -1,8 +1,7 @@
 package dao
 
 import (
-	"superTools-background/internal/model"
-	"superTools-background/pkg/app"
+	"github.com/jinzhu/gorm"
 )
 
 /**
@@ -12,60 +11,32 @@ import (
 **/
 
 type Story struct {
-	ID         string `json:"id"`
-	TagID      uint32 `json:"tag_id"`
-	Story      string `json:"story"`
-	Author     string `json:"author"`
-	CreatedBy  string `json:"created_by"`
-	ModifiedBy string `json:"modified_by"`
-	State      uint8  `json:"state"`
+	ID     string `json:"id"`
+	Story  string `json:"story"`
+	Author string `json:"author"`
+	State  uint8  `json:"state"`
 }
 
-func (d *Dao) CreateStory(param *Story) (*model.BedtimeStory, error) {
-	story := model.BedtimeStory{
-		Story:  param.Story,
-		Author: param.Author,
-		State:  param.State,
-		Model:  &model.Model{CreatedBy: param.CreatedBy},
+type IStory interface {
+	SelectStory() (*Story, error)
+}
+
+type StoryManager struct {
+	table string
+	conn  *gorm.DB
+}
+
+func NewStoryManager(table string, conn *gorm.DB) IStory {
+	return &StoryManager{table: table, conn: conn}
+}
+
+//从数据库中随机选择一条数据返回
+func (m *StoryManager) SelectStory() (*Story, error) {
+	result := m.conn.Raw(`SELECT s1.id AS id, s1.author AS author, s1.story AS story, s1.state as state FROM stories AS s1 JOIN (SELECT ROUND(RAND() * ((SELECT MAX(id) FROM stories) - (SELECT MIN(id) FROM stories)) + (SELECT MIN(id) FROM stories)) AS id) AS s2 ON s1.id >= s2.id LIMIT 1;`).Row()
+	story := &Story{}
+	err := result.Scan(&story.ID, &story.Author, &story.Story, &story.State)
+	if err != nil {
+		return nil, err
 	}
-	return story.Create(d.engine)
-}
-
-func (d *Dao) UpdateStory(param *Story) error {
-	story := model.BedtimeStory{Model: &model.Model{ID: param.ID}}
-	values := map[string]interface{}{
-		"modified_by": param.ModifiedBy,
-		"state":       param.State,
-	}
-
-	if param.Story != "" {
-		values["story"] = param.Story
-	}
-
-	return story.Update(d.engine, values)
-}
-
-func (d *Dao) GetStory(id string, state uint8) (model.BedtimeStory, error) {
-	story := model.BedtimeStory{Model: &model.Model{ID: id}, State: state}
-	return story.Get(d.engine)
-}
-
-func (d *Dao) GetStoryOnly(id string, state uint8) (model.BedtimeStory, error) {
-	story := model.BedtimeStory{Model: &model.Model{ID: id}, State: state}
-	return story.Get(d.engine)
-}
-
-func (d *Dao) DeleteStory(id string) error {
-	story := model.BedtimeStory{Model: &model.Model{ID: id}}
-	return story.Delete(d.engine)
-}
-
-func (d *Dao) CountStoryListByTagID(id string, state uint8) (int, error) {
-	story := model.BedtimeStory{State: state}
-	return story.CountByTagID(d.engine, id)
-}
-
-func (d *Dao) GetStoryListByTagID(id string, state uint8, page, pageSize int) ([]*model.StoryRow, error) {
-	story := model.BedtimeStory{State: state}
-	return story.ListByTagID(d.engine, id, app.GetPageOffset(page, pageSize), pageSize)
+	return story, nil
 }
