@@ -44,9 +44,9 @@ func (o OrderController) GetOrderList(c *gin.Context) {
 		return
 	}
 	data := gin.H{
-		"page_num":pager.Page,
-		"page_size":pager.PageSize,
-		"orders":orders,
+		"page_num":  pager.Page,
+		"page_size": pager.PageSize,
+		"orders":    orders,
 	}
 	response.ToResponse(data, "获取订单列表成功", http.StatusOK)
 	return
@@ -99,9 +99,9 @@ func (o OrderController) GetOrderListByUserID(c *gin.Context) {
 		return
 	}
 	data := gin.H{
-		"page_num":pager.Page,
-		"page_size":pager.PageSize,
-		"orders":orders,
+		"page_num":  pager.Page,
+		"page_size": pager.PageSize,
+		"orders":    orders,
 	}
 	response.ToResponse(data, "获取用户订单列表成功", http.StatusOK)
 	return

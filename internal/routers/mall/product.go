@@ -44,9 +44,9 @@ func (p ProductController) GetProductList(c *gin.Context) {
 		return
 	}
 	data := gin.H{
-		"page_num":pager.Page,
-		"page_size":pager.PageSize,
-		"products":products,
+		"page_num":  pager.Page,
+		"page_size": pager.PageSize,
+		"products":  products,
 	}
 	response.ToResponse(data, "获取商品列表成功", http.StatusOK)
 	return

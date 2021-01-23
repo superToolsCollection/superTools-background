@@ -111,7 +111,7 @@ func (u UserController) Register(c *gin.Context) {
 		return
 	}
 	response.ToResponse(gin.H{
-		"user_id":userId,
+		"user_id": userId,
 	}, "用户注册成功", http.StatusOK)
 	return
 }

@@ -246,9 +246,9 @@ func (t ToolController) GetToolList(c *gin.Context) {
 		return
 	}
 	data := gin.H{
-		"page_num":pager.Page,
-		"page_size":pager.PageSize,
-		"tools":tools,
+		"page_num":  pager.Page,
+		"page_size": pager.PageSize,
+		"tools":     tools,
 	}
 	response.ToResponse(data, "获取工具列表成功", http.StatusOK)
 	return

@@ -43,6 +43,23 @@ func GenerateToken(appKey, appSecret string) (string, error) {
 	return token, err
 }
 
+func GenerateTokenByUserName(userName string) (string, error) {
+	nowTime := time.Now()
+	expireTime := nowTime.Add(global.JWTSetting.Expire)
+	claims := Claims{
+		AppKey:    util.EncodeMD5(userName),
+		AppSecret: util.EncodeMD5(global.JWTSetting.Secret),
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expireTime.Unix(),
+			Issuer:    global.JWTSetting.Issuer,
+		},
+	}
+
+	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	token, err := tokenClaims.SignedString(GetJWTSecret())
+	return token, err
+}
+
 //解析token
 func ParseToken(token string) (*Claims, error) {
 	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {

@@ -8,12 +8,12 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"superTools-background/internal/routers/api"
 	"superTools-background/pkg/elastic"
 	"superTools-background/pkg/mq"
 	"time"
 
 	"superTools-background/global"
-	"superTools-background/internal/routers"
 	"superTools-background/pkg/cache"
 	"superTools-background/pkg/db"
 	"superTools-background/pkg/idGenerator"
@@ -88,7 +88,8 @@ func init() {
 // @description 超级工具合集
 // @Github https://github.com/superToolsCollection
 func main() {
-	router := routers.NewRouter()
+	//router := routers.NewRouter()
+	router := api.NewRouter()
 	s := &http.Server{
 		Addr:           ":" + global.ServerSetting.HttpPort,
 		Handler:        router,

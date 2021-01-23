@@ -19,8 +19,8 @@ type Response struct {
 }
 
 type Meta struct {
-	Msg string `json:"msg"`
-	Status int `json:"status"`
+	Msg    string `json:"msg"`
+	Status int    `json:"status"`
 }
 
 type Pager struct {
@@ -41,12 +41,12 @@ func NewResponse(ctx *gin.Context) *Response {
 func (r *Response) ToResponse(data interface{}, msg string, status int) {
 	if data == nil {
 		data = gin.H{}
-	}else{
+	} else {
 		data = gin.H{
-			"data":data,
-			"meta":Meta{
-				Msg:msg,
-				Status:status,
+			"data": data,
+			"meta": Meta{
+				Msg:    msg,
+				Status: status,
 			},
 		}
 	}
@@ -55,10 +55,10 @@ func (r *Response) ToResponse(data interface{}, msg string, status int) {
 
 func (r *Response) ToErrorResponse(err *errcode.Error) {
 	response := gin.H{
-		"data":gin.H{},
-		"meta":Meta{
-			Msg:err.Msg(),
-			Status:err.Code(),
+		"data": gin.H{},
+		"meta": Meta{
+			Msg:    err.Msg(),
+			Status: err.Code(),
 		},
 	}
 	details := err.Details()

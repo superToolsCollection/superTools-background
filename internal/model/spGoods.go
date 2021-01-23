@@ -7,9 +7,9 @@ package model
 **/
 
 type SpGood struct {
-	DeleteTime     int64   `gorm:"column:delete_time" json:"delete_time"`
-	CatThreeID     int     `gorm:"column:cat_three_id" json:"cat_three_id"`
-	CatTwoID       int     `gorm:"column:cat_two_id" json:"cat_two_id"`
+	DeleteTime int64 `gorm:"column:delete_time" json:"delete_time"`
+	CatThreeID int   `gorm:"column:cat_three_id" json:"cat_three_id"`
+	CatTwoID   int   `gorm:"column:cat_two_id" json:"cat_two_id"`
 	// 0: 未通过 1: 审核中 2: 已审核
 	GoodsState     int     `gorm:"column:goods_state" json:"goods_state"`
 	GoodsID        int     `gorm:"column:goods_id;primary_key" json:"goods_id"`
@@ -25,7 +25,7 @@ type SpGood struct {
 	CatID          int     `gorm:"column:cat_id" json:"cat_id"`
 	GoodsIntroduce string  `gorm:"column:goods_introduce" json:"goods_introduce"`
 	GoodsSmallLogo string  `gorm:"column:goods_small_logo" json:"goods_small_logo"`
-	IsDel          int  `gorm:"column:is_del" json:"is_del"`
+	IsDel          int     `gorm:"column:is_del" json:"is_del"`
 	IsPromote      int     `gorm:"column:is_promote" json:"is_promote"`
 }
 

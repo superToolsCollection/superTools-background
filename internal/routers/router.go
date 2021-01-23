@@ -55,8 +55,6 @@ func NewRouter() *gin.Engine {
 	r.Use(middleware.Translations())
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-
-
 	//获取token
 	authManager := dao.NewAuthManager("auth", global.DBEngine)
 	authService := service.NewAuthService(authManager)
