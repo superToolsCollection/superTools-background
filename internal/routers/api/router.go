@@ -46,13 +46,13 @@ func NewRouter() *gin.Engine {
 	r.Use(middleware.Translations())
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	userManager := dao.NewUserManager("users", global.DBEngine)
-	userService := service.NewUserService(userManager)
-	userController := v1.NewUserController(userService)
+	spManager := dao.NewSpManagerManger("sp_manager", global.DBEngine)
+	spService := service.NewSpManagerService(spManager)
+	spController := v1.NewSpManagerController(spService)
 
 	userGroup := r.Group("/api/private/v1/")
 	{
-		userGroup.POST("/login", userController.Login)
+		userGroup.POST("/login", spController.Login)
 	}
 
 	return r

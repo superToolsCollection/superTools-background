@@ -2,7 +2,7 @@ package service
 
 import (
 	"errors"
-	"golang.org/x/crypto/bcrypt"
+	"superTools-background/pkg/util"
 
 	"superTools-background/internal/dao"
 	"superTools-background/pkg/idGenerator"
@@ -53,7 +53,7 @@ func (s *UserService) SignIn(param *UserSignInRequest) (*User, error) {
 	if err != nil {
 		return nil, errors.New("获取用户失败")
 	}
-	isOk, err := ValidatePassword(param.Password, user.HashPassword)
+	isOk, err := util.ValidatePassword(param.Password, user.HashPassword)
 	if !isOk {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (s *UserService) SignIn(param *UserSignInRequest) (*User, error) {
 }
 
 func (s *UserService) Register(param *UserRegisterRequest) (string, error) {
-	hashedPassword, err := GeneratePassword(param.Password)
+	hashedPassword, err := util.GeneratePassword(param.Password)
 	if err != nil {
 		return "", err
 	}
@@ -82,7 +82,7 @@ func (s *UserService) Register(param *UserRegisterRequest) (string, error) {
 }
 
 func (s *UserService) UpdateInfo(param *UserUpdateInfoRequest) error {
-	hashedPassword, err := GeneratePassword(param.Password)
+	hashedPassword, err := util.GeneratePassword(param.Password)
 	if err != nil {
 		return err
 	}
@@ -100,18 +100,4 @@ func (s *UserService) UpdateInfo(param *UserUpdateInfoRequest) error {
 
 func NewUserService(userDao dao.IUser) IUserService {
 	return &UserService{userDao: userDao}
-}
-
-//将明文密码加密
-func GeneratePassword(userPassword string) ([]byte, error) {
-	return bcrypt.GenerateFromPassword([]byte(userPassword), bcrypt.DefaultCost)
-
-}
-
-//验证登录密码是否正确
-func ValidatePassword(userPassword string, hashed string) (isOK bool, err error) {
-	if err = bcrypt.CompareHashAndPassword([]byte(hashed), []byte(userPassword)); err != nil {
-		return false, errors.New("密码校验错误")
-	}
-	return true, nil
 }

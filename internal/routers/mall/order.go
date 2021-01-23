@@ -190,7 +190,7 @@ func (o OrderController) Insert(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorInsertOrderFail)
 		return
 	}
-	response.ToResponse(gin.H{}, "插入订单成功", http.StatusOK)
+	response.ToResponse(gin.H{}, "插入订单成功", http.StatusCreated)
 	return
 }
 
