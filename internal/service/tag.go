@@ -2,7 +2,7 @@ package service
 
 import (
 	"strings"
-	"superTools-frontground-backend/internal/dao"
+	"superTools-background/internal/dao"
 )
 
 /**

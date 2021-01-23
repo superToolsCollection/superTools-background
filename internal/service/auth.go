@@ -1,6 +1,9 @@
 package service
 
-import "errors"
+import (
+	"errors"
+	"superTools-background/internal/dao"
+)
 
 /**
 * @Author: super
@@ -13,8 +16,26 @@ type AuthRequest struct {
 	AppSecret string `form:"app_secret" binding:"required"`
 }
 
-func (svc *Service) CheckAuth(param *AuthRequest) error {
-	auth, err := svc.dao.GetAuth(
+type Auth struct {
+	ID string `json:"id"`
+	AppKey    string `json:"app_key"`
+	AppSecret string `json:"app_secret"`
+}
+
+type IAuthService interface {
+	CheckAuth(param *AuthRequest) error
+}
+
+type AuthService struct {
+	authDao dao.IAuth
+}
+
+func NewAuthService(authDao dao.IAuth) IAuthService {
+	return &AuthService{authDao: authDao}
+}
+
+func (svc *AuthService) CheckAuth(param *AuthRequest) error {
+	auth, err := svc.authDao.GetAuth(
 		param.AppKey,
 		param.AppSecret,
 	)

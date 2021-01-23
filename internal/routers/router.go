@@ -1,7 +1,6 @@
 package routers
 
 import (
-	"go.opencensus.io/tag"
 	"net/http"
 	"superTools-background/internal/routers/tools"
 	"time"
@@ -56,8 +55,13 @@ func NewRouter() *gin.Engine {
 	r.Use(middleware.Translations())
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+
+
 	//获取token
-	r.GET("/auth", api.GetAuth)
+	authManager := dao.NewAuthManager("auth", global.DBEngine)
+	authService := service.NewAuthService(authManager)
+	authController := api.NewAuthController(authService)
+	r.GET("/auth", authController.GetAuth)
 
 	upload := api.NewUpload()
 	r.POST("/upload/file", upload.UploadFile)

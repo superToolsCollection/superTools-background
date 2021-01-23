@@ -16,6 +16,14 @@ import (
 * @Description: auth对应的restful api
 **/
 
+type AuthController struct {
+	AuthService service.IAuthService
+}
+
+func NewAuthController(authService service.IAuthService) AuthController {
+	return AuthController{AuthService: authService}
+}
+
 // @Summary 获得token
 // @Produce json
 // @Param app_key query string true "app_key"
@@ -24,7 +32,7 @@ import (
 // @Failure 400 {object} errcode.Error "请求错误"
 // @Failure 500 {object} errcode.Error "内部错误"
 // @Router /auth [get]
-func GetAuth(c *gin.Context) {
+func (controller *AuthController)GetAuth(c *gin.Context) {
 	param := service.AuthRequest{}
 	response := app.NewResponse(c)
 	valid, errs := app.BindAndValid(c, &param)
@@ -34,8 +42,7 @@ func GetAuth(c *gin.Context) {
 		return
 	}
 
-	svc := service.New(c.Request.Context())
-	err := svc.CheckAuth(&param)
+	err := controller.AuthService.CheckAuth(&param)
 	if err != nil {
 		global.Logger.Errorf(c, "svc.CheckAuth err: %v", err)
 		response.ToErrorResponse(errcode.UnauthorizedAuthNotExist)
