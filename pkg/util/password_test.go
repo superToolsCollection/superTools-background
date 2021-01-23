@@ -10,7 +10,7 @@ import "testing"
 
 func TestGeneratePassword(t *testing.T) {
 	bytes, err := GeneratePassword("admin")
-	if err != nil{
+	if err != nil {
 		t.Log(err)
 	}
 	t.Log(string(bytes))

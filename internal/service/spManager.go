@@ -2,6 +2,7 @@ package service
 
 import (
 	"superTools-background/internal/dao"
+	"superTools-background/pkg/app"
 	"superTools-background/pkg/util"
 )
 
@@ -14,6 +15,10 @@ import (
 type GetSpMangerRequest struct {
 	UserName string `form:"user_name" binding:"required,min=2,max=4294967295"`
 	Password string `form:"password" binding:"required,min=2,max=4294967295"`
+}
+
+type GetSpMangerListRequest struct {
+	Query string `form:"query"`
 }
 
 type SpManager struct {
@@ -29,6 +34,7 @@ type SpManager struct {
 
 type ISpManagerService interface {
 	GetSpManager(param *GetSpMangerRequest) (*SpManager, error)
+	GetSpManagerList(param *GetSpMangerListRequest, pager *app.Pager) ([]*SpManager, int, error)
 }
 
 type SpManagerService struct {
@@ -54,6 +60,26 @@ func (s *SpManagerService) GetSpManager(param *GetSpMangerRequest) (*SpManager, 
 		MgTime:   spManager.MgTime,
 		RoleID:   spManager.RoleID,
 	}, nil
+}
+
+func (s *SpManagerService) GetSpManagerList(param *GetSpMangerListRequest, pager *app.Pager) ([]*SpManager, int, error) {
+	list, totalPage, err := s.dao.SelectList(param.Query, pager.Page, pager.PageSize)
+	if err != nil {
+		return nil, 0, err
+	}
+	result := make([]*SpManager, len(list))
+	for i, v := range list {
+		result[i] = &SpManager{}
+		result[i].MgPwd = v.MgPwd
+		result[i].MgEmail = v.MgEmail
+		result[i].MgMobile = v.MgMobile
+		result[i].MgName = v.MgName
+		result[i].RoleID = v.RoleID
+		result[i].MgID = v.MgID
+		result[i].MgTime = v.MgTime
+		result[i].MgState = v.MgState
+	}
+	return result, totalPage, nil
 }
 
 func NewSpManagerService(dao dao.ISpManager) ISpManagerService {

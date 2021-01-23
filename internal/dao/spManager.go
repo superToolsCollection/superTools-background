@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/jinzhu/gorm"
 	"superTools-background/internal/model"
+	"superTools-background/pkg/app"
 )
 
 /**
@@ -26,6 +27,7 @@ type SpManager struct {
 type ISpManager interface {
 	SelectByID(id int) (*SpManager, error)
 	SelectByNamePwd(name string) (*SpManager, error)
+	SelectList(query string, page int, pageSize int) ([]*SpManager, int, error)
 }
 
 type SpManagerManger struct {
@@ -67,6 +69,38 @@ func (m *SpManagerManger) SelectByNamePwd(name string) (*SpManager, error) {
 		MgTime:   spManger.MgTime,
 		RoleID:   spManger.RoleID,
 	}, nil
+}
+
+func (m *SpManagerManger) SelectList(query string, page int, pageSize int) ([]*SpManager, int, error) {
+	pageOffset := app.GetPageOffset(page, pageSize)
+	if pageOffset < 0 && pageSize < 0 {
+		pageOffset = 0
+		pageSize = 5
+	}
+	var spManagers []*model.SpManager
+	var count int
+	stmt := m.conn.Offset(pageOffset).Limit(pageSize).Find(&spManagers)
+	if stmt.Error != nil {
+		return nil, 0, stmt.Error
+	}
+	stmt = stmt.Count(&count)
+	if stmt.Error != nil {
+		return nil, 0, stmt.Error
+	}
+
+	result := make([]*SpManager, len(spManagers))
+	for i, v := range spManagers {
+		result[i] = &SpManager{}
+		result[i].MgPwd = v.MgPwd
+		result[i].MgEmail = v.MgEmail
+		result[i].MgMobile = v.MgMobile
+		result[i].MgName = v.MgName
+		result[i].RoleID = v.RoleID
+		result[i].MgID = v.MgID
+		result[i].MgTime = v.MgTime
+		result[i].MgState = v.MgState
+	}
+	return result, count, nil
 }
 
 func NewSpManagerManger(table string, conn *gorm.DB) ISpManager {

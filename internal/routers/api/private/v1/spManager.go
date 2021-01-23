@@ -57,3 +57,28 @@ func (s SpManagerController) Login(c *gin.Context) {
 	response.ToResponse(data, "登陆成功", http.StatusOK)
 	return
 }
+
+func (s SpManagerController) Users(c *gin.Context) {
+	param := service.GetSpMangerListRequest{}
+	pager := app.Pager{Page: app.GetPage(c), PageSize: app.GetPageSize(c)}
+	response := app.NewResponse(c)
+	valid, errs := app.BindAndValid(c, &param)
+	if !valid {
+		global.Logger.Errorf(c, "app.BindAndValid errs: %v", errs)
+		response.ToErrorResponse(errcode.InvalidParams.WithDetails(errs.Errors()...))
+		return
+	}
+	result, totalPage, err := s.SpManagerService.GetSpManagerList(&param, &pager)
+	if err != nil {
+		global.Logger.Errorf(c, "SpManagerService.GetSpManagerList errs: %v", errs)
+		response.ToErrorResponse(errcode.ErrorUserListFail)
+		return
+	}
+	data := gin.H{
+		"totalpage": totalPage,
+		"pagenum":   pager.Page,
+		"users":     result,
+	}
+	response.ToResponse(data, "获取成功", http.StatusOK)
+	return
+}
