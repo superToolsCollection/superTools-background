@@ -17,6 +17,7 @@ import (
 	"superTools-background/internal/service"
 	"superTools-background/pkg/limiter"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -40,6 +41,7 @@ var methodLimiters = limiter.NewMethodLimiter().AddBuckets(
 
 func NewRouter() *gin.Engine {
 	r := gin.New()
+	r.Use(cors.Default())
 	if global.ServerSetting.RunMode == "debug" {
 		r.Use(gin.Logger())
 		r.Use(gin.Recovery())
@@ -128,7 +130,7 @@ func registerUser(r *gin.Engine, db *gorm.DB) {
 
 	userGroup := r.Group("/api/v1/user/")
 	{
-		userGroup.POST("/signin", userController.SignIn)
+		userGroup.POST("/login", userController.Login)
 		userGroup.POST("/register", userController.Register)
 		userGroup.PUT("/update", userController.Update)
 	}

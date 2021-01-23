@@ -1,6 +1,7 @@
 package bedtimeStory
 
 import (
+	"net/http"
 	"superTools-background/global"
 	"superTools-background/internal/service"
 	"superTools-background/pkg/app"
@@ -48,7 +49,7 @@ func (t Story) Get(c *gin.Context) {
 		return
 	}
 
-	response.ToResponse(story)
+	response.ToResponse(story, "获取睡前故事成功", http.StatusOK)
 	return
 }
 
@@ -78,7 +79,7 @@ func (t Story) GetOnly(c *gin.Context) {
 		return
 	}
 
-	response.ToResponse(story)
+	response.ToResponse(story, "获取睡前故事成功", http.StatusOK)
 	return
 }
 
@@ -106,13 +107,18 @@ func (t Story) List(c *gin.Context) {
 	svc := service.New(c.Request.Context())
 	pager := app.Pager{Page: app.GetPage(c), PageSize: app.GetPageSize(c)}
 	stories, totalRows, err := svc.GetStoryList(&param, &pager)
+	pager.TotalRows = totalRows
 	if err != nil {
 		global.Logger.Errorf(c, "svc.GetStoryList err: %v", err)
 		response.ToErrorResponse(errcode.ErrorGetStoriesFail)
 		return
 	}
-
-	response.ToResponseList(stories, totalRows)
+	data := gin.H{
+		"total_page":pager.TotalRows/pager.PageSize,
+		"page_num":pager.Page,
+		"stories":stories,
+	}
+	response.ToResponse(data, "获取故事列表成功", http.StatusOK)
 	return
 }
 
@@ -146,7 +152,7 @@ func (t Story) Create(c *gin.Context) {
 		return
 	}
 
-	response.ToResponse(gin.H{})
+	response.ToResponse(gin.H{}, "创建故事成功", http.StatusOK)
 	return
 }
 
@@ -178,7 +184,7 @@ func (t Story) Update(c *gin.Context) {
 		return
 	}
 
-	response.ToResponse(gin.H{})
+	response.ToResponse(gin.H{}, "更新故事成功", http.StatusOK)
 	return
 }
 
@@ -208,6 +214,6 @@ func (t Story) Delete(c *gin.Context) {
 		return
 	}
 
-	response.ToResponse(gin.H{})
+	response.ToResponse(gin.H{}, "删除故事成功", http.StatusOK)
 	return
 }

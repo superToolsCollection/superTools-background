@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
+	"net/http"
 
 	"superTools-background/global"
 	"superTools-background/internal/service"
@@ -31,8 +32,8 @@ func NewUserController(userService service.IUserService) UserController {
 // @Success 200 {object} service.User "成功"
 // @Failure 400 {object} errcode.Error "请求错误"
 // @Failure 500 {object} errcode.Error "内部错误"
-// @Router /api/v1/user/signin [post]
-func (u UserController) SignIn(c *gin.Context) {
+// @Router /api/v1/user/login [post]
+func (u UserController) Login(c *gin.Context) {
 	param := service.UserSignInRequest{}
 	response := app.NewResponse(c)
 	valid, errs := app.BindAndValid(c, &param)
@@ -48,7 +49,7 @@ func (u UserController) SignIn(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorUserSignInFail)
 		return
 	}
-	response.ToResponse(user)
+	response.ToResponse(user, "用户登陆成功", http.StatusOK)
 	return
 }
 
@@ -79,7 +80,7 @@ func (u UserController) Update(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorUserUpdateFail)
 		return
 	}
-	response.ToResponse("success")
+	response.ToResponse(gin.H{}, "用户信息更新成功", http.StatusOK)
 	return
 }
 
@@ -109,6 +110,8 @@ func (u UserController) Register(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorUserRegisterFail)
 		return
 	}
-	response.ToResponse(userId)
+	response.ToResponse(gin.H{
+		"user_id":userId,
+	}, "用户注册成功", http.StatusOK)
 	return
 }

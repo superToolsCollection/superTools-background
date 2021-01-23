@@ -67,11 +67,11 @@ func init() {
 	if err != nil {
 		log.Printf("init setupRabbitMQEngine err: %v\n", err)
 	}
-	//初始化elastic
-	err = setupElasticEngine()
-	if err != nil {
-		log.Printf("init setupElasticEngine err: %v\n", err)
-	}
+	//todo: 初始化elastic
+	//err = setupElasticEngine()
+	//if err != nil {
+	//	log.Printf("init setupElasticEngine err: %v\n", err)
+	//}
 	//初始化追踪
 	err = setupTracer()
 	if err != nil {

@@ -18,6 +18,11 @@ type Response struct {
 	Ctx *gin.Context
 }
 
+type Meta struct {
+	Msg string `json:"msg"`
+	Status int `json:"status"`
+}
+
 type Pager struct {
 	// 页码
 	Page int `json:"page"`
@@ -33,26 +38,29 @@ func NewResponse(ctx *gin.Context) *Response {
 	}
 }
 
-func (r *Response) ToResponse(data interface{}) {
+func (r *Response) ToResponse(data interface{}, msg string, status int) {
 	if data == nil {
 		data = gin.H{}
+	}else{
+		data = gin.H{
+			"data":data,
+			"meta":Meta{
+				Msg:msg,
+				Status:status,
+			},
+		}
 	}
 	r.Ctx.JSON(http.StatusOK, data)
 }
 
-func (r *Response) ToResponseList(list interface{}, totalRows int) {
-	r.Ctx.JSON(http.StatusOK, gin.H{
-		"list": list,
-		"pager": Pager{
-			Page:      GetPage(r.Ctx),
-			PageSize:  GetPageSize(r.Ctx),
-			TotalRows: totalRows,
-		},
-	})
-}
-
 func (r *Response) ToErrorResponse(err *errcode.Error) {
-	response := gin.H{"code": err.Code(), "msg": err.Msg()}
+	response := gin.H{
+		"data":gin.H{},
+		"meta":Meta{
+			Msg:err.Msg(),
+			Status:err.Code(),
+		},
+	}
 	details := err.Details()
 	if len(details) > 0 {
 		response["details"] = details

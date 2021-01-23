@@ -2,6 +2,7 @@ package bedtimeStory
 
 import (
 	"github.com/gin-gonic/gin"
+	"net/http"
 
 	"superTools-background/global"
 	"superTools-background/internal/service"
@@ -45,6 +46,7 @@ func (t Tag) List(c *gin.Context) {
 	svc := service.New(c.Request.Context())
 	pager := app.Pager{Page: app.GetPage(c), PageSize: app.GetPageSize(c)}
 	totalRows, err := svc.CountTag(&service.CountTagRequest{})
+	pager.TotalRows = totalRows
 	if err != nil {
 		global.Logger.Errorf(c, "svc.CountTag err: %v", err)
 		response.ToErrorResponse(errcode.ErrorCountTagFail)
@@ -56,7 +58,12 @@ func (t Tag) List(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorGetTagListFail)
 		return
 	}
-	response.ToResponseList(tags, totalRows)
+	data := gin.H{
+		"total_page":pager.TotalRows/pager.PageSize,
+		"page_num":pager.Page,
+		"tags":tags,
+	}
+	response.ToResponse(data, "获取标签列表成功", http.StatusOK)
 	return
 }
 
@@ -88,7 +95,7 @@ func (t Tag) Create(c *gin.Context) {
 		return
 	}
 
-	response.ToResponse(gin.H{})
+	response.ToResponse(gin.H{}, "创建标签成功", http.StatusOK)
 	return
 
 }
@@ -122,7 +129,7 @@ func (t Tag) Update(c *gin.Context) {
 		return
 	}
 
-	response.ToResponse(gin.H{})
+	response.ToResponse(gin.H{}, "更新标签成功", http.StatusOK)
 	return
 }
 
@@ -152,6 +159,6 @@ func (t Tag) Delete(c *gin.Context) {
 		return
 	}
 
-	response.ToResponse(gin.H{})
+	response.ToResponse(gin.H{}, "删除标签成功", http.StatusOK)
 	return
 }

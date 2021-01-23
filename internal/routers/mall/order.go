@@ -2,6 +2,7 @@ package mall
 
 import (
 	"github.com/gin-gonic/gin"
+	"net/http"
 
 	"superTools-background/global"
 	"superTools-background/internal/service"
@@ -42,7 +43,12 @@ func (o OrderController) GetOrderList(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorGetOrderListFail)
 		return
 	}
-	response.ToResponse(orders)
+	data := gin.H{
+		"page_num":pager.Page,
+		"page_size":pager.PageSize,
+		"orders":orders,
+	}
+	response.ToResponse(data, "获取订单列表成功", http.StatusOK)
 	return
 }
 
@@ -61,7 +67,7 @@ func (o OrderController) GetAllOrder(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorGetAllOrderFail)
 		return
 	}
-	response.ToResponse(orders)
+	response.ToResponse(orders, "获取全部清单成功", http.StatusOK)
 	return
 }
 
@@ -92,7 +98,12 @@ func (o OrderController) GetOrderListByUserID(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorGetOrderListByUserIDFail)
 		return
 	}
-	response.ToResponse(orders)
+	data := gin.H{
+		"page_num":pager.Page,
+		"page_size":pager.PageSize,
+		"orders":orders,
+	}
+	response.ToResponse(data, "获取用户订单列表成功", http.StatusOK)
 	return
 }
 
@@ -120,7 +131,7 @@ func (o OrderController) GetOrderByUserID(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorGetOrderByUserIDFail)
 		return
 	}
-	response.ToResponse(orders)
+	response.ToResponse(orders, "获取用户订单成功", http.StatusOK)
 	return
 }
 
@@ -148,7 +159,7 @@ func (o OrderController) GetOrder(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorGetOrderFail)
 		return
 	}
-	response.ToResponse(order)
+	response.ToResponse(order, "获取订单成功", http.StatusOK)
 	return
 }
 
@@ -173,13 +184,13 @@ func (o OrderController) Insert(c *gin.Context) {
 		return
 	}
 
-	order, err := o.OrderService.InsertOrder(&param)
+	_, err := o.OrderService.InsertOrder(&param)
 	if err != nil {
 		global.Logger.Errorf(c, "svc.InsertOrder err: %v", err)
 		response.ToErrorResponse(errcode.ErrorInsertOrderFail)
 		return
 	}
-	response.ToResponse(order)
+	response.ToResponse(gin.H{}, "插入订单成功", http.StatusOK)
 	return
 }
 
@@ -210,7 +221,7 @@ func (o OrderController) Update(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorUpdateOrderFail)
 		return
 	}
-	response.ToResponse("success")
+	response.ToResponse(gin.H{}, "更新订单成功", http.StatusOK)
 	return
 }
 
@@ -238,6 +249,6 @@ func (o OrderController) Delete(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorDeleteOrderFail)
 		return
 	}
-	response.ToResponse("success")
+	response.ToResponse(gin.H{}, "删除订单成功", http.StatusOK)
 	return
 }

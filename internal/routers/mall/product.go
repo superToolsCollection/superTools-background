@@ -2,6 +2,7 @@ package mall
 
 import (
 	"github.com/gin-gonic/gin"
+	"net/http"
 
 	"superTools-background/global"
 	"superTools-background/internal/service"
@@ -42,7 +43,12 @@ func (p ProductController) GetProductList(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorGetProductListFail)
 		return
 	}
-	response.ToResponse(products)
+	data := gin.H{
+		"page_num":pager.Page,
+		"page_size":pager.PageSize,
+		"products":products,
+	}
+	response.ToResponse(data, "获取商品列表成功", http.StatusOK)
 	return
 }
 
@@ -61,7 +67,7 @@ func (p ProductController) GetAllProduct(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorGetAllProductFail)
 		return
 	}
-	response.ToResponse(products)
+	response.ToResponse(products, "获取全部商品成功", http.StatusOK)
 	return
 }
 
@@ -89,7 +95,7 @@ func (p ProductController) GetProduct(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorGetProductFail)
 		return
 	}
-	response.ToResponse(product)
+	response.ToResponse(product, "获取商品成功", http.StatusOK)
 	return
 }
 
@@ -115,13 +121,13 @@ func (p ProductController) Insert(c *gin.Context) {
 		return
 	}
 
-	product, err := p.ProductService.InsertProduct(&param)
+	_, err := p.ProductService.InsertProduct(&param)
 	if err != nil {
 		global.Logger.Errorf(c, "svc.InsertProduct err: %v", err)
 		response.ToErrorResponse(errcode.ErrorInsertProductFail)
 		return
 	}
-	response.ToResponse(product)
+	response.ToResponse(gin.H{}, "插入商品成功", http.StatusOK)
 	return
 }
 
@@ -153,7 +159,7 @@ func (p ProductController) Update(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorUpdateProductFail)
 		return
 	}
-	response.ToResponse("success")
+	response.ToResponse(gin.H{}, "更新商品成功", http.StatusOK)
 	return
 }
 
@@ -181,6 +187,6 @@ func (p ProductController) Delete(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorDeleteProductFail)
 		return
 	}
-	response.ToResponse("success")
+	response.ToResponse(gin.H{}, "删除商品成功", http.StatusOK)
 	return
 }

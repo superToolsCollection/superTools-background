@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"net/http"
 
 	"superTools-background/global"
 	"superTools-background/internal/service"
@@ -55,5 +56,5 @@ func (u Upload) UploadFile(c *gin.Context) {
 
 	response.ToResponse(gin.H{
 		"file_access_url": fileInfo.AccessUrl,
-	})
+	}, "文件上传成功", http.StatusOK)
 }

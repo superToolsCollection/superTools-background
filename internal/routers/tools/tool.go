@@ -2,6 +2,7 @@ package tools
 
 import (
 	"github.com/gin-gonic/gin"
+	"net/http"
 
 	"superTools-background/global"
 	"superTools-background/internal/service"
@@ -44,13 +45,13 @@ func (t ToolController) AddTool(c *gin.Context) {
 		return
 	}
 
-	order, err := t.ToolService.AddTool(&param)
+	_, err := t.ToolService.AddTool(&param)
 	if err != nil {
 		global.Logger.Errorf(c, "svc.AddTool err: %v", err)
 		response.ToErrorResponse(errcode.ErrorAddToolFail)
 		return
 	}
-	response.ToResponse(order)
+	response.ToResponse(gin.H{}, "添加工具成功", http.StatusOK)
 	return
 }
 
@@ -82,7 +83,7 @@ func (t ToolController) UpdateToolInfo(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorUpdateToolInfoFail)
 		return
 	}
-	response.ToResponse("success")
+	response.ToResponse(gin.H{}, "更新工具信息成功", http.StatusOK)
 	return
 }
 
@@ -110,7 +111,7 @@ func (t ToolController) DeleteTool(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorDeleteToolFail)
 		return
 	}
-	response.ToResponse("success")
+	response.ToResponse(gin.H{}, "删除工具成功", http.StatusOK)
 	return
 }
 
@@ -138,7 +139,7 @@ func (t ToolController) ToolOnLine(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorToolOnlineFail)
 		return
 	}
-	response.ToResponse("success")
+	response.ToResponse(gin.H{}, "工具上线成功", http.StatusOK)
 	return
 }
 
@@ -166,7 +167,7 @@ func (t ToolController) ToolOffLine(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorToolOffLineFail)
 		return
 	}
-	response.ToResponse("success")
+	response.ToResponse(gin.H{}, "工具下线成功", http.StatusOK)
 	return
 }
 
@@ -194,7 +195,7 @@ func (t ToolController) GetToolByKey(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorGetToolByKeyFail)
 		return
 	}
-	response.ToResponse(tool)
+	response.ToResponse(tool, "获取工具成功", http.StatusOK)
 	return
 }
 
@@ -222,7 +223,7 @@ func (t ToolController) GetToolByName(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorGetToolByNameFail)
 		return
 	}
-	response.ToResponse(tool)
+	response.ToResponse(tool, "获取工具成功", http.StatusOK)
 	return
 }
 
@@ -244,6 +245,11 @@ func (t ToolController) GetToolList(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorGetToolListFail)
 		return
 	}
-	response.ToResponse(tools)
+	data := gin.H{
+		"page_num":pager.Page,
+		"page_size":pager.PageSize,
+		"tools":tools,
+	}
+	response.ToResponse(data, "获取工具列表成功", http.StatusOK)
 	return
 }

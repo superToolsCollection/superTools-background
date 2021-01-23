@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"net/http"
 
 	"superTools-background/global"
 	"superTools-background/internal/service"
@@ -50,5 +51,5 @@ func GetAuth(c *gin.Context) {
 
 	response.ToResponse(gin.H{
 		"token": token,
-	})
+	}, "获取token成功", http.StatusOK)
 }
