@@ -1,11 +1,14 @@
 package v1
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strings"
 	"superTools-background/global"
 	"superTools-background/internal/service"
 	"superTools-background/pkg/app"
+	"superTools-background/pkg/convert"
 	"superTools-background/pkg/errcode"
 )
 
@@ -97,4 +100,68 @@ func (s SpManagerController) AddUser(c *gin.Context) {
 		return
 	}
 	response.ToResponse(result, "用户创建成功", http.StatusCreated)
+}
+
+func (s SpManagerController) UpdateUserState(c *gin.Context) {
+	response := app.NewResponse(c)
+	idStr := strings.TrimSpace(c.Param("id"))
+	if idStr == "" || len(idStr) == 0 {
+		global.Logger.Errorf(c, "SpManagerService.UpdateUserState errs: %v", errors.New("wrong id"))
+		response.ToErrorResponse(errcode.ErrorUpdateUserStateFail)
+		return
+	}
+	id := convert.StrTo(idStr).MustInt64()
+	t := strings.TrimSpace(c.Param("type"))
+	if t == "" || len(t) == 0 {
+		global.Logger.Errorf(c, "SpManagerService.UpdateUserState errs: %v", errors.New("wrong type"))
+		response.ToErrorResponse(errcode.ErrorUpdateUserStateFail)
+		return
+	}
+	param := service.UpdateSpMangerStateRequest{
+		ID:   id,
+		Type: t,
+	}
+	result, err := s.SpManagerService.UpdateSpManagerState(&param)
+	if err != nil {
+		global.Logger.Errorf(c, "SpManagerService.UpdateUserState errs: %v", err)
+		response.ToErrorResponse(errcode.ErrorUpdateUserStateFail)
+		return
+	}
+	data := gin.H{
+		"id":       result.MgID,
+		"rid":      result.RoleID,
+		"username": result.MgName,
+		"mobile":   result.MgMobile,
+		"email":    result.MgEmail,
+		"mg_state": result.MgState,
+	}
+	response.ToResponse(data, "设置状态成功", http.StatusOK)
+}
+
+func (s SpManagerController) GetUserByID(c *gin.Context) {
+	response := app.NewResponse(c)
+	idStr := strings.TrimSpace(c.Param("id"))
+	if idStr == "" || len(idStr) == 0 {
+		global.Logger.Errorf(c, "SpManagerService.GetUserByID errs: %v", errors.New("wrong id"))
+		response.ToErrorResponse(errcode.ErrorGetUserByID)
+		return
+	}
+	id := convert.StrTo(idStr).MustInt64()
+	param := service.GetSpMangerByIDRequest{
+		ID:int(id),
+	}
+	result, err := s.SpManagerService.GetSpManagerByID(&param)
+	if err != nil {
+		global.Logger.Errorf(c, "SpManagerService.UpdateUserState errs: %v", err)
+		response.ToErrorResponse(errcode.ErrorGetUserByID)
+		return
+	}
+	data := gin.H{
+		"id":       result.MgID,
+		"rid":      result.RoleID,
+		"username": result.MgName,
+		"mobile":   result.MgMobile,
+		"email":    result.MgEmail,
+	}
+	response.ToResponse(data, "查询成功", http.StatusOK)
 }

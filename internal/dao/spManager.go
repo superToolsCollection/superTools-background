@@ -2,7 +2,6 @@ package dao
 
 import (
 	"errors"
-	"fmt"
 	"github.com/jinzhu/gorm"
 	"superTools-background/internal/model"
 	"superTools-background/pkg/app"
@@ -31,6 +30,7 @@ type ISpManager interface {
 	SelectByNamePwd(name string) (*SpManager, error)
 	SelectList(query string, page int, pageSize int) ([]*SpManager, int, error)
 	Insert(spManager *SpManager) (*SpManager, error)
+	Update(manager *SpManager) (*SpManager, error)
 }
 
 type SpManagerManger struct {
@@ -40,18 +40,15 @@ type SpManagerManger struct {
 
 func (m *SpManagerManger) SelectByID(id int) (*SpManager, error) {
 	spManager := &model.SpManager{}
-	result := m.conn.Where("id=?", id).Find(spManager)
+	result := m.conn.Where("mg_id=?", id).Find(spManager)
 	if result.RecordNotFound() {
 		return nil, errors.New("wrong id")
 	}
 	return &SpManager{
 		MgMobile: spManager.MgMobile,
 		MgEmail:  spManager.MgEmail,
-		MgState:  spManager.MgState,
 		MgID:     spManager.MgID,
 		MgName:   spManager.MgName,
-		MgPwd:    spManager.MgPwd,
-		MgTime:   spManager.MgTime,
 		RoleID:   spManager.RoleID,
 	}, nil
 }
@@ -119,7 +116,24 @@ func (m *SpManagerManger) Insert(spManager *SpManager) (*SpManager, error) {
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	fmt.Println(s)
+	return &SpManager{
+		MgID:     s.MgID,
+		RoleID:   s.RoleID,
+		MgName:   s.MgName,
+		MgMobile: s.MgMobile,
+		MgEmail:  s.MgEmail,
+		MgTime:   s.MgTime,
+	}, nil
+}
+
+func (m *SpManagerManger) Update(manager *SpManager) (*SpManager, error) {
+	s := &model.SpManager{
+		MgState: manager.MgState,
+	}
+	result := m.conn.Model(s).Where("mg_id=?", manager.MgID).Update("mg_state", manager.MgState)
+	if result.Error != nil {
+		return nil, result.Error
+	}
 	return &SpManager{
 		MgID:     s.MgID,
 		RoleID:   s.RoleID,
