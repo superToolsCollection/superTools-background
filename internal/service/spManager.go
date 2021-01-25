@@ -21,6 +21,13 @@ type GetSpMangerListRequest struct {
 	Query string `form:"query"`
 }
 
+type AddSpMangerRequest struct {
+	UserName string `form:"user_name" binding:"required,min=2,max=4294967295"`
+	Password string `form:"password" binding:"required,min=2,max=4294967295"`
+	Email    string `form:"email"`
+	Mobile   string `form:"mobile"`
+}
+
 type SpManager struct {
 	MgMobile string `json:"mg_mobile"`
 	MgEmail  string `json:"mg_email"`
@@ -35,6 +42,7 @@ type SpManager struct {
 type ISpManagerService interface {
 	GetSpManager(param *GetSpMangerRequest) (*SpManager, error)
 	GetSpManagerList(param *GetSpMangerListRequest, pager *app.Pager) ([]*SpManager, int, error)
+	AddSpManager(param *AddSpMangerRequest) (*SpManager, error)
 }
 
 type SpManagerService struct {
@@ -56,7 +64,6 @@ func (s *SpManagerService) GetSpManager(param *GetSpMangerRequest) (*SpManager, 
 		MgState:  spManager.MgState,
 		MgID:     spManager.MgID,
 		MgName:   spManager.MgName,
-		MgPwd:    spManager.MgPwd,
 		MgTime:   spManager.MgTime,
 		RoleID:   spManager.RoleID,
 	}, nil
@@ -70,7 +77,6 @@ func (s *SpManagerService) GetSpManagerList(param *GetSpMangerListRequest, pager
 	result := make([]*SpManager, len(list))
 	for i, v := range list {
 		result[i] = &SpManager{}
-		result[i].MgPwd = v.MgPwd
 		result[i].MgEmail = v.MgEmail
 		result[i].MgMobile = v.MgMobile
 		result[i].MgName = v.MgName
@@ -80,6 +86,27 @@ func (s *SpManagerService) GetSpManagerList(param *GetSpMangerListRequest, pager
 		result[i].MgState = v.MgState
 	}
 	return result, totalPage, nil
+}
+
+func (s *SpManagerService) AddSpManager(param *AddSpMangerRequest) (*SpManager, error) {
+	manager := &dao.SpManager{
+		MgName:   param.UserName,
+		MgPwd:    param.Password,
+		MgEmail:  param.Email,
+		MgMobile: param.Mobile,
+	}
+	result, err := s.dao.Insert(manager)
+	if err != nil {
+		return nil, err
+	}
+	return &SpManager{
+		MgID:     result.MgID,
+		RoleID:   result.RoleID,
+		MgName:   result.MgName,
+		MgMobile: result.MgMobile,
+		MgEmail:  result.MgEmail,
+		MgTime:   result.MgTime,
+	}, nil
 }
 
 func NewSpManagerService(dao dao.ISpManager) ISpManagerService {

@@ -55,7 +55,6 @@ func (s SpManagerController) Login(c *gin.Context) {
 		"token":    token,
 	}
 	response.ToResponse(data, "登陆成功", http.StatusOK)
-	return
 }
 
 func (s SpManagerController) Users(c *gin.Context) {
@@ -80,5 +79,22 @@ func (s SpManagerController) Users(c *gin.Context) {
 		"users":     result,
 	}
 	response.ToResponse(data, "获取成功", http.StatusOK)
-	return
+}
+
+func (s SpManagerController) AddUser(c *gin.Context) {
+	param := service.AddSpMangerRequest{}
+	response := app.NewResponse(c)
+	valid, errs := app.BindAndValid(c, &param)
+	if !valid {
+		global.Logger.Errorf(c, "app.BindAndValid errs: %v", errs)
+		response.ToErrorResponse(errcode.InvalidParams.WithDetails(errs.Errors()...))
+		return
+	}
+	result, err := s.SpManagerService.AddSpManager(&param)
+	if err != nil {
+		global.Logger.Errorf(c, "SpManagerService.AddSpManager errs: %v", errs)
+		response.ToErrorResponse(errcode.ErrorAddUser)
+		return
+	}
+	response.ToResponse(result, "用户创建成功", http.StatusCreated)
 }

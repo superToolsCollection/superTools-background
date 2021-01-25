@@ -11,4 +11,5 @@ var (
 	ErrorUserUpdateFail   = NewError(20060002, "用户信息更新失败")
 	ErrorUserRegisterFail = NewError(20060003, "用户注册失败")
 	ErrorUserListFail     = NewError(20060004, "获取用户列表失败")
+	ErrorAddUser          = NewError(20060005, "添加用户失败")
 )

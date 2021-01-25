@@ -2,9 +2,11 @@ package dao
 
 import (
 	"errors"
+	"fmt"
 	"github.com/jinzhu/gorm"
 	"superTools-background/internal/model"
 	"superTools-background/pkg/app"
+	"time"
 )
 
 /**
@@ -28,6 +30,7 @@ type ISpManager interface {
 	SelectByID(id int) (*SpManager, error)
 	SelectByNamePwd(name string) (*SpManager, error)
 	SelectList(query string, page int, pageSize int) ([]*SpManager, int, error)
+	Insert(spManager *SpManager) (*SpManager, error)
 }
 
 type SpManagerManger struct {
@@ -101,6 +104,30 @@ func (m *SpManagerManger) SelectList(query string, page int, pageSize int) ([]*S
 		result[i].MgState = v.MgState
 	}
 	return result, count, nil
+}
+
+func (m *SpManagerManger) Insert(spManager *SpManager) (*SpManager, error) {
+	s := &model.SpManager{
+		MgName:   spManager.MgName,
+		MgPwd:    spManager.MgPwd,
+		MgEmail:  spManager.MgEmail,
+		MgMobile: spManager.MgMobile,
+		MgTime:   time.Now().Unix(),
+		MgState:  1,
+	}
+	result := m.conn.Create(s)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	fmt.Println(s)
+	return &SpManager{
+		MgID:     s.MgID,
+		RoleID:   s.RoleID,
+		MgName:   s.MgName,
+		MgMobile: s.MgMobile,
+		MgEmail:  s.MgEmail,
+		MgTime:   s.MgTime,
+	}, nil
 }
 
 func NewSpManagerManger(table string, conn *gorm.DB) ISpManager {

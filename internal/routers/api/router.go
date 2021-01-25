@@ -54,6 +54,7 @@ func NewRouter() *gin.Engine {
 	{
 		userGroup.POST("/login", spController.Login)
 		userGroup.GET("/users", spController.Users)
+		userGroup.POST("/users", spController.AddUser)
 	}
 
 	return r
