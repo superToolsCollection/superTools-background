@@ -38,6 +38,12 @@ type GetSpMangerByIDRequest struct {
 	ID   int  `form:"id" binding:"required,gte=1"`
 }
 
+type UpdateSpManagerInfoRequest struct {
+	ID   int  `form:"id" binding:"required,gte=1"`
+	Email    string `form:"email"`
+	Mobile   string `form:"mobile"`
+}
+
 type SpManager struct {
 	MgMobile string `json:"mg_mobile"`
 	MgEmail  string `json:"mg_email"`
@@ -55,6 +61,7 @@ type ISpManagerService interface {
 	AddSpManager(param *AddSpMangerRequest) (*SpManager, error)
 	UpdateSpManagerState(param *UpdateSpMangerStateRequest) (*SpManager, error)
 	GetSpManagerByID(param *GetSpMangerByIDRequest) (*SpManager, error)
+	UpdateSpManagerInfo(param *UpdateSpManagerInfoRequest) (*SpManager, error)
 }
 
 type SpManagerService struct {
@@ -157,6 +164,10 @@ func (s *SpManagerService) GetSpManagerByID(param *GetSpMangerByIDRequest) (*SpM
 		MgMobile: result.MgMobile,
 		MgEmail:  result.MgEmail,
 	}, nil
+}
+
+func UpdateSpManagerInfo(param *UpdateSpManagerInfoRequest) (*SpManager, error){
+	
 }
 
 func NewSpManagerService(dao dao.ISpManager) ISpManagerService {

@@ -165,3 +165,27 @@ func (s SpManagerController) GetUserByID(c *gin.Context) {
 	}
 	response.ToResponse(data, "查询成功", http.StatusOK)
 }
+
+func (s SpManagerController) UpdateUserInfo(c *gin.Context) {
+	param := service.UpdateSpManagerInfoRequest{}
+	response := app.NewResponse(c)
+	valid, errs := app.BindAndValid(c, &param)
+	if !valid {
+		global.Logger.Errorf(c, "app.BindAndValid errs: %v", errs)
+		response.ToErrorResponse(errcode.InvalidParams.WithDetails(errs.Errors()...))
+		return
+	}
+	result, err := s.SpManagerService.UpdateSpManagerInfo(&param)
+	if err != nil {
+		global.Logger.Errorf(c, "SpManagerService.UpdateUserState errs: %v", err)
+		response.ToErrorResponse(errcode.ErrorGetUserByID)
+		return
+	}
+	data := gin.H{
+		"id":       result.MgID,
+		"rid":      result.RoleID,
+		"mobile":   result.MgMobile,
+		"email":    result.MgEmail,
+	}
+	response.ToResponse(data, "查询成功", http.StatusOK)
+}
