@@ -35,13 +35,17 @@ type UpdateSpMangerStateRequest struct {
 }
 
 type GetSpMangerByIDRequest struct {
-	ID   int  `form:"id" binding:"required,gte=1"`
+	ID int `form:"id" binding:"required,gte=1"`
 }
 
 type UpdateSpManagerInfoRequest struct {
-	ID   int  `form:"id" binding:"required,gte=1"`
-	Email    string `form:"email"`
-	Mobile   string `form:"mobile"`
+	ID     int    `form:"id"`
+	Email  string `form:"email"`
+	Mobile string `form:"mobile"`
+}
+
+type DeleteSpMangerRequest struct {
+	ID int `form:"id"`
 }
 
 type SpManager struct {
@@ -62,6 +66,7 @@ type ISpManagerService interface {
 	UpdateSpManagerState(param *UpdateSpMangerStateRequest) (*SpManager, error)
 	GetSpManagerByID(param *GetSpMangerByIDRequest) (*SpManager, error)
 	UpdateSpManagerInfo(param *UpdateSpManagerInfoRequest) (*SpManager, error)
+	DeleteSpManager(param *DeleteSpMangerRequest) error
 }
 
 type SpManagerService struct {
@@ -166,8 +171,30 @@ func (s *SpManagerService) GetSpManagerByID(param *GetSpMangerByIDRequest) (*SpM
 	}, nil
 }
 
-func UpdateSpManagerInfo(param *UpdateSpManagerInfoRequest) (*SpManager, error){
-	
+func (s *SpManagerService) UpdateSpManagerInfo(param *UpdateSpManagerInfoRequest) (*SpManager, error) {
+	manager := &dao.SpManager{
+		MgID:     param.ID,
+		MgMobile: param.Mobile,
+		MgEmail:  param.Email,
+	}
+	result, err := s.dao.UpdateInfo(manager)
+	if err != nil {
+		return nil, err
+	}
+	return &SpManager{
+		MgID:     result.MgID,
+		RoleID:   result.RoleID,
+		MgMobile: result.MgMobile,
+		MgEmail:  result.MgEmail,
+	}, nil
+}
+
+func (s *SpManagerService) DeleteSpManager(param *DeleteSpMangerRequest) error {
+	err := s.dao.Delete(param.ID)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func NewSpManagerService(dao dao.ISpManager) ISpManagerService {

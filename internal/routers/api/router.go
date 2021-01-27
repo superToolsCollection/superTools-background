@@ -58,8 +58,8 @@ func NewRouter() *gin.Engine {
 		userGroup.PUT("/users/:id/state/:type", spController.UpdateUserState)
 		userGroup.GET("/users/:id", spController.GetUserByID)
 		userGroup.PUT("/users/:id", spController.UpdateUserInfo)
+		userGroup.DELETE("/users/:id", spController.DeleteUser)
 		//todo
-		userGroup.DELETE("/users/:id", spController.AddUser)
 		userGroup.PUT("/users/:id/role", spController.AddUser)
 	}
 	return r

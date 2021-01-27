@@ -31,6 +31,8 @@ type ISpManager interface {
 	SelectList(query string, page int, pageSize int) ([]*SpManager, int, error)
 	Insert(spManager *SpManager) (*SpManager, error)
 	Update(manager *SpManager) (*SpManager, error)
+	UpdateInfo(manager *SpManager) (*SpManager, error)
+	Delete(id int) error
 }
 
 type SpManagerManger struct {
@@ -130,7 +132,9 @@ func (m *SpManagerManger) Update(manager *SpManager) (*SpManager, error) {
 	s := &model.SpManager{
 		MgState: manager.MgState,
 	}
-	result := m.conn.Model(s).Where("mg_id=?", manager.MgID).Update("mg_state", manager.MgState)
+	result := m.conn.Model(s).
+		Where("mg_id=?", manager.MgID).
+		Update("mg_state", manager.MgState)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -142,6 +146,32 @@ func (m *SpManagerManger) Update(manager *SpManager) (*SpManager, error) {
 		MgEmail:  s.MgEmail,
 		MgTime:   s.MgTime,
 	}, nil
+}
+
+func (m *SpManagerManger) UpdateInfo(manager *SpManager) (*SpManager, error) {
+	s := &model.SpManager{
+		MgMobile: manager.MgMobile,
+		MgEmail:  manager.MgEmail,
+	}
+	result := m.conn.Model(s).
+		Where("mg_id=?", manager.MgID).Updates(s)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &SpManager{
+		MgID:     s.MgID,
+		RoleID:   s.RoleID,
+		MgMobile: s.MgMobile,
+		MgEmail:  s.MgEmail,
+	}, nil
+}
+
+func (m *SpManagerManger) Delete(id int) error {
+	result := m.conn.Where("mg_id = ?", id).Delete(model.SpManager{})
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
 }
 
 func NewSpManagerManger(table string, conn *gorm.DB) ISpManager {

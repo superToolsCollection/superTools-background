@@ -148,7 +148,7 @@ func (s SpManagerController) GetUserByID(c *gin.Context) {
 	}
 	id := convert.StrTo(idStr).MustInt64()
 	param := service.GetSpMangerByIDRequest{
-		ID:int(id),
+		ID: int(id),
 	}
 	result, err := s.SpManagerService.GetSpManagerByID(&param)
 	if err != nil {
@@ -167,8 +167,17 @@ func (s SpManagerController) GetUserByID(c *gin.Context) {
 }
 
 func (s SpManagerController) UpdateUserInfo(c *gin.Context) {
-	param := service.UpdateSpManagerInfoRequest{}
 	response := app.NewResponse(c)
+	idStr := strings.TrimSpace(c.Param("id"))
+	if idStr == "" || len(idStr) == 0 {
+		global.Logger.Errorf(c, "SpManagerService.GetUserByID errs: %v", errors.New("wrong id"))
+		response.ToErrorResponse(errcode.ErrorGetUserByID)
+		return
+	}
+	id := convert.StrTo(idStr).MustInt64()
+	param := service.UpdateSpManagerInfoRequest{
+		ID: int(id),
+	}
 	valid, errs := app.BindAndValid(c, &param)
 	if !valid {
 		global.Logger.Errorf(c, "app.BindAndValid errs: %v", errs)
@@ -178,14 +187,35 @@ func (s SpManagerController) UpdateUserInfo(c *gin.Context) {
 	result, err := s.SpManagerService.UpdateSpManagerInfo(&param)
 	if err != nil {
 		global.Logger.Errorf(c, "SpManagerService.UpdateUserState errs: %v", err)
-		response.ToErrorResponse(errcode.ErrorGetUserByID)
+		response.ToErrorResponse(errcode.ErrorUpdateUserInfo)
 		return
 	}
 	data := gin.H{
-		"id":       result.MgID,
-		"rid":      result.RoleID,
-		"mobile":   result.MgMobile,
-		"email":    result.MgEmail,
+		"id":     result.MgID,
+		"rid":    result.RoleID,
+		"mobile": result.MgMobile,
+		"email":  result.MgEmail,
 	}
-	response.ToResponse(data, "查询成功", http.StatusOK)
+	response.ToResponse(data, "更新成功", http.StatusOK)
+}
+
+func (s SpManagerController) DeleteUser(c *gin.Context) {
+	response := app.NewResponse(c)
+	idStr := strings.TrimSpace(c.Param("id"))
+	if idStr == "" || len(idStr) == 0 {
+		global.Logger.Errorf(c, "SpManagerService.GetUserByID errs: %v", errors.New("wrong id"))
+		response.ToErrorResponse(errcode.ErrorGetUserByID)
+		return
+	}
+	id := convert.StrTo(idStr).MustInt64()
+	param := service.DeleteSpMangerRequest{
+		ID: int(id),
+	}
+	err := s.SpManagerService.DeleteSpManager(&param)
+	if err != nil {
+		global.Logger.Errorf(c, "SpManagerService.DeleteUser errs: %v", err)
+		response.ToErrorResponse(errcode.ErrorDeleteUser)
+		return
+	}
+	response.ToResponse(nil, "删除成功", http.StatusOK)
 }
