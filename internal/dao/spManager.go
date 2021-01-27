@@ -33,6 +33,7 @@ type ISpManager interface {
 	Update(manager *SpManager) (*SpManager, error)
 	UpdateInfo(manager *SpManager) (*SpManager, error)
 	Delete(id int) error
+	UpdateRole(manager *SpManager) (*SpManager, error)
 }
 
 type SpManagerManger struct {
@@ -172,6 +173,25 @@ func (m *SpManagerManger) Delete(id int) error {
 		return result.Error
 	}
 	return nil
+}
+
+func (m *SpManagerManger) UpdateRole(manager *SpManager) (*SpManager, error) {
+	s := &model.SpManager{
+		RoleID: manager.RoleID,
+	}
+	result := m.conn.Model(s).
+		Where("mg_id=?", manager.MgID).
+		Update("role_id", manager.RoleID)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &SpManager{
+		MgID:     s.MgID,
+		RoleID:   s.RoleID,
+		MgName:   s.MgName,
+		MgMobile: s.MgMobile,
+		MgEmail:  s.MgEmail,
+	}, nil
 }
 
 func NewSpManagerManger(table string, conn *gorm.DB) ISpManager {

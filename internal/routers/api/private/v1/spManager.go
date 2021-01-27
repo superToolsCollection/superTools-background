@@ -219,3 +219,37 @@ func (s SpManagerController) DeleteUser(c *gin.Context) {
 	}
 	response.ToResponse(nil, "删除成功", http.StatusOK)
 }
+
+func (s SpManagerController) SetRole(c *gin.Context) {
+	response := app.NewResponse(c)
+	idStr := strings.TrimSpace(c.Param("id"))
+	if idStr == "" || len(idStr) == 0 {
+		global.Logger.Errorf(c, "SpManagerService.GetUserByID errs: %v", errors.New("wrong id"))
+		response.ToErrorResponse(errcode.ErrorGetUserByID)
+		return
+	}
+	id := convert.StrTo(idStr).MustInt64()
+	param := service.SetRoleRequest{
+		ID: int(id),
+	}
+	valid, errs := app.BindAndValid(c, &param)
+	if !valid {
+		global.Logger.Errorf(c, "app.BindAndValid errs: %v", errs)
+		response.ToErrorResponse(errcode.InvalidParams.WithDetails(errs.Errors()...))
+		return
+	}
+	result, err := s.SpManagerService.SetRole(&param)
+	if err != nil {
+		global.Logger.Errorf(c, "SpManagerService.DeleteUser errs: %v", err)
+		response.ToErrorResponse(errcode.ErrorDeleteUser)
+		return
+	}
+	data := gin.H{
+		"id":       result.MgID,
+		"rid":      result.RoleID,
+		"username": result.MgName,
+		"mobile":   result.MgMobile,
+		"email":    result.MgEmail,
+	}
+	response.ToResponse(data, "设置角色成功", http.StatusOK)
+}

@@ -48,6 +48,11 @@ type DeleteSpMangerRequest struct {
 	ID int `form:"id"`
 }
 
+type SetRoleRequest struct {
+	ID  int `form:"id"`
+	Rid int `form:"rid" binding:"required,gte=1"`
+}
+
 type SpManager struct {
 	MgMobile string `json:"mg_mobile"`
 	MgEmail  string `json:"mg_email"`
@@ -67,6 +72,7 @@ type ISpManagerService interface {
 	GetSpManagerByID(param *GetSpMangerByIDRequest) (*SpManager, error)
 	UpdateSpManagerInfo(param *UpdateSpManagerInfoRequest) (*SpManager, error)
 	DeleteSpManager(param *DeleteSpMangerRequest) error
+	SetRole(param *SetRoleRequest) (*SpManager, error)
 }
 
 type SpManagerService struct {
@@ -195,6 +201,25 @@ func (s *SpManagerService) DeleteSpManager(param *DeleteSpMangerRequest) error {
 		return err
 	}
 	return nil
+}
+
+func (s *SpManagerService) SetRole(param *SetRoleRequest) (*SpManager, error) {
+	manager := &dao.SpManager{
+		MgID:   int(param.ID),
+		RoleID: param.Rid,
+	}
+	result, err := s.dao.UpdateRole(manager)
+	if err != nil {
+		return nil, err
+	}
+	return &SpManager{
+		MgID:     result.MgID,
+		RoleID:   result.RoleID,
+		MgName:   result.MgName,
+		MgMobile: result.MgMobile,
+		MgEmail:  result.MgEmail,
+		MgState:  result.MgState,
+	}, nil
 }
 
 func NewSpManagerService(dao dao.ISpManager) ISpManagerService {
