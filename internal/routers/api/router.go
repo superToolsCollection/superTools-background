@@ -50,9 +50,15 @@ func NewRouter() *gin.Engine {
 	spService := service.NewSpManagerService(spManager)
 	spController := v1.NewSpManagerController(spService)
 
+	perManager := dao.NewSpPermissionManger("sp_permission", global.DBEngine)
+	perApiManager := dao.NewSpPermissionApiManger("sp_permission_api", global.DBEngine)
+	perService := service.NewSpPermissionService(perManager, perApiManager)
+	perController := v1.NewSpPermissionController(perService)
+
 	userGroup := r.Group("/api/private/v1/")
 	{
 		userGroup.POST("/login", spController.Login)
+		//用户管理
 		userGroup.GET("/users", spController.Users)
 		userGroup.POST("/users", spController.AddUser)
 		userGroup.PUT("/users/:id/state/:type", spController.UpdateUserState)
@@ -60,6 +66,8 @@ func NewRouter() *gin.Engine {
 		userGroup.PUT("/users/:id", spController.UpdateUserInfo)
 		userGroup.DELETE("/users/:id", spController.DeleteUser)
 		userGroup.PUT("/users/:id/role", spController.SetRole)
+		// 权限管理
+		userGroup.GET("/rights/:type", perController.GetRights)
 	}
 	return r
 }

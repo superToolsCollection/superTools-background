@@ -6,7 +6,7 @@ package model
 * @Description: api描述表
 **/
 
-type SpPremissionApi struct {
+type SpPermissionApi struct {
 	PsAPIAction  string `gorm:"column:ps_api_action" json:"ps_api_action"`
 	PsAPIPath    string `gorm:"column:ps_api_path" json:"ps_api_path"`
 	PsAPIOrder   int    `gorm:"column:ps_api_order" json:"ps_api_order"`
@@ -16,6 +16,6 @@ type SpPremissionApi struct {
 }
 
 // TableName sets the insert table name for this struct type
-func (s *SpPremissionApi) TableName() string {
+func (s *SpPermissionApi) TableName() string {
 	return "sp_permission_api"
 }
