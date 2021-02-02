@@ -20,5 +20,6 @@ var (
 	ElasticSetting  *setting.ElasticSettingS
 	EmailSetting    *setting.EmailSettingS
 	JWTSetting      *setting.JWTSettingS
+	MongoDBSetting      *setting.MongoDBSettingS
 	Logger          *logger.Logger
 )

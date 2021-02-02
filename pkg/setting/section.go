@@ -78,6 +78,12 @@ type ElasticSettingS struct {
 	Index string
 }
 
+type MongoDBSettingS struct {
+	Url         string
+	MaxPoolSize uint64
+	Timeout     int
+}
+
 var sections = make(map[string]interface{})
 
 func (s *Setting) ReadSection(k string, v interface{}) error {

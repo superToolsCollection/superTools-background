@@ -10,6 +10,7 @@ import (
 	"strings"
 	"superTools-background/internal/routers/api"
 	"superTools-background/pkg/elastic"
+	"superTools-background/pkg/mongoDB"
 	"superTools-background/pkg/mq"
 	"time"
 
@@ -72,6 +73,11 @@ func init() {
 	//if err != nil {
 	//	log.Printf("init setupElasticEngine err: %v\n", err)
 	//}
+	//初始化MongoDB
+	err = setupMongoDBEngine()
+	if err != nil {
+		log.Printf("init setupMongoDBEngine err: %v\n", err)
+	}
 	//初始化追踪
 	err = setupTracer()
 	if err != nil {
@@ -170,6 +176,10 @@ func setupSetting() error {
 	if err != nil {
 		return err
 	}
+	err = newSetting.ReadSection("MongoDB", &global.MongoDBSetting)
+	if err != nil {
+		return err
+	}
 	err = newSetting.ReadSection("Email", &global.EmailSetting)
 	if err != nil {
 		return err
@@ -220,6 +230,15 @@ func setupRabbitMQEngine() error {
 func setupElasticEngine() error {
 	var err error
 	global.ElasticEngine, err = elastic.NewElasticEngine(global.ElasticSetting)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func setupMongoDBEngine() error {
+	var err error
+	global.MongoDBEngine, err = mongoDB.NewMongoDBEngine(global.MongoDBSetting)
 	if err != nil {
 		return err
 	}

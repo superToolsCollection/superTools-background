@@ -28,7 +28,7 @@ func NewSpPermissionController(spPermissionService service.ISpPermissionService)
 func (s SpPermissionController) GetRights(c *gin.Context) {
 	response := app.NewResponse(c)
 	typeStr := strings.TrimSpace(c.Param("type"))
-	if typeStr == "" || len(typeStr) == 0 || (typeStr != "list" && typeStr != "tree"){
+	if typeStr == "" || len(typeStr) == 0 || (typeStr != "list" && typeStr != "tree") {
 		global.Logger.Errorf(c, "SpPermissionController.GetRights errs: %v", errors.New("wrong type"))
 		response.ToErrorResponse(errcode.ErrorGetRightsFail)
 		return

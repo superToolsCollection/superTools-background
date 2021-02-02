@@ -26,7 +26,7 @@ require (
 	github.com/swaggo/swag v1.5.1
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
-	go.opencensus.io v0.22.5
+	go.mongodb.org/mongo-driver v1.4.5
 	go.uber.org/atomic v1.6.0 // indirect
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/lint v0.0.0-20191125180803-fdd1cda4f05f // indirect
