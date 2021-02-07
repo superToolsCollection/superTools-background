@@ -75,6 +75,10 @@ func NewRouter() *gin.Engine {
 		userGroup.GET("/menus", perController.GetMenus)
 
 		userGroup.GET("/roles", roleController.GetRoleList)
+		userGroup.POST("/roles", roleController.AddRole)
+		userGroup.GET("/roles/:id", roleController.GetRoleById)
+		userGroup.PUT("/roles/:id", roleController.UpdateRole)
+		userGroup.DELETE("/roles/:id", roleController.DeleteRole)
 	}
 	return r
 }

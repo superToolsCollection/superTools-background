@@ -1,11 +1,14 @@
 package v1
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strings"
 	"superTools-background/global"
 	"superTools-background/internal/service"
 	"superTools-background/pkg/app"
+	"superTools-background/pkg/convert"
 	"superTools-background/pkg/errcode"
 )
 
@@ -50,4 +53,70 @@ func (s SpRoleController) AddRole(c *gin.Context) {
 		return
 	}
 	response.ToResponse(result, "创建成功", http.StatusCreated)
+}
+
+func (s SpRoleController) GetRoleById(c *gin.Context) {
+	param := service.GetRoleByIdRequest{}
+	response := app.NewResponse(c)
+	idStr := strings.TrimSpace(c.Param("id"))
+	if idStr == "" || len(idStr) == 0 {
+		global.Logger.Errorf(c, "SpRoleService.GetRoleById errs: %v", errors.New("wrong id"))
+		response.ToErrorResponse(errcode.ErrorGetRoleByIdFail)
+		return
+	}
+	id := convert.StrTo(idStr).MustInt64()
+	param.ID = int(id)
+	result, err := s.Service.GetRoleByID(&param)
+	if err != nil {
+		global.Logger.Errorf(c, "SpRoleService.GetRoleById errs: %v", err)
+		response.ToErrorResponse(errcode.ErrorGetRoleByIdFail)
+		return
+	}
+	response.ToResponse(result, "获取成功", http.StatusOK)
+}
+
+func (s SpRoleController) UpdateRole(c *gin.Context) {
+	param := service.UpdateRoleRequest{}
+	response := app.NewResponse(c)
+	idStr := strings.TrimSpace(c.Param("id"))
+	if idStr == "" || len(idStr) == 0 {
+		global.Logger.Errorf(c, "SpRoleService.UpdateRole errs: %v", errors.New("wrong id"))
+		response.ToErrorResponse(errcode.ErrorUpdateRoleFail)
+		return
+	}
+	id := convert.StrTo(idStr).MustInt64()
+	param.ID = int(id)
+	valid, errs := app.BindAndValid(c, &param)
+	if !valid {
+		global.Logger.Errorf(c, "app.BindAndValid errs: %v", errs)
+		response.ToErrorResponse(errcode.InvalidParams.WithDetails(errs.Errors()...))
+		return
+	}
+	result, err := s.Service.UpdateRole(&param)
+	if err != nil {
+		global.Logger.Errorf(c, "SpRoleService.UpdateRole errs: %v", errs)
+		response.ToErrorResponse(errcode.ErrorUpdateRoleFail)
+		return
+	}
+	response.ToResponse(result, "编辑成功", http.StatusOK)
+}
+
+func (s SpRoleController) DeleteRole(c *gin.Context) {
+	param := service.DeleteRoleRequest{}
+	response := app.NewResponse(c)
+	idStr := strings.TrimSpace(c.Param("id"))
+	if idStr == "" || len(idStr) == 0 {
+		global.Logger.Errorf(c, "SpRoleService.DeleteRole errs: %v", errors.New("wrong id"))
+		response.ToErrorResponse(errcode.ErrorUpdateRoleFail)
+		return
+	}
+	id := convert.StrTo(idStr).MustInt64()
+	param.ID = int(id)
+	err := s.Service.DeleteRole(&param)
+	if err != nil {
+		global.Logger.Errorf(c, "SpRoleService.DeleteRole errs: %v", err)
+		response.ToErrorResponse(errcode.ErrorUpdateRoleFail)
+		return
+	}
+	response.ToResponse(gin.H{}, "删除成功", http.StatusOK)
 }
