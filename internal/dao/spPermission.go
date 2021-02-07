@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"fmt"
 	"github.com/jinzhu/gorm"
 	"superTools-background/internal/model"
 )
@@ -18,6 +19,16 @@ type SpPermission struct {
 	PsC     string `json:"ps_c"`
 	PsA     string `json:"ps_a"`
 	PsLevel int    `json:"ps_level"`
+}
+
+func (s SpPermission)String() string{
+	return fmt.Sprintf("ps_id: %d, " +
+		"ps_name:%s, " +
+		"ps_pid:%d, " +
+		"ps_c:%s, " +
+		"ps_a:%s, " +
+		"ps_level:%d\n",
+		s.PsID, s.PsName, s.PsPid, s.PsC, s.PsA, s.PsLevel)
 }
 
 type ISpPermission interface {

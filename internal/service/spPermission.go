@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"superTools-background/internal/dao"
 )
 
@@ -18,14 +17,14 @@ type GetRightsRequest struct {
 type SpPermission struct {
 	ID       int    `json:"id"`
 	AuthName string `json:"authName"`
-	Pid      string `json:"pid"`
+	Pid      int `json:"pid"`
 	Level    int    `json:"level"`
 	Path     string `json:"path"`
-	Children []SpPermission
+	Children []*SpPermission
 }
 
 type ISpPermissionService interface {
-	GetRights(param *GetRightsRequest) ([]SpPermission, error)
+	GetRights(param *GetRightsRequest) ([]*SpPermission, error)
 }
 
 type SpPermissionService struct {
@@ -33,14 +32,10 @@ type SpPermissionService struct {
 	permissionApiDao dao.ISpPermissionApi
 }
 
-func (s *SpPermissionService) GetRights(param *GetRightsRequest) ([]SpPermission, error) {
+func (s *SpPermissionService) GetRights(param *GetRightsRequest) ([]*SpPermission, error) {
 	perList, err := s.permissionDao.Select()
 	if err != nil {
 		return nil, err
-	}
-	perMap := make(map[int]*dao.SpPermission)
-	for i := 0; i < len(perList); i++ {
-		perMap[perList[i].PsID] = perList[i]
 	}
 	perApiList, err := s.permissionApiDao.Select()
 	if err != nil {
@@ -50,38 +45,83 @@ func (s *SpPermissionService) GetRights(param *GetRightsRequest) ([]SpPermission
 	for i := 0; i < len(perApiList); i++ {
 		perApiMap[perApiList[i].PsID] = perApiList[i]
 	}
-	result := make([]SpPermission, 0)
+	result := make([]*SpPermission, 0)
 	if param.Type == "list" {
 		for i := 0; i < len(perList); i++ {
 			v := perList[i]
 			if v.PsLevel == 0 {
-				temp := SpPermission{
+				temp := &SpPermission{
 					ID:       v.PsID,
 					AuthName: v.PsName,
 					Level:    v.PsLevel,
-					Pid:      fmt.Sprintf("%d", v.PsPid),
+					Pid:      v.PsPid,
 				}
 				result = append(result, temp)
 			}
 		}
 	} else {
-		//todo 完善tree权限列表
-		for i := 0; i < len(perList); i++ {
-			v := perList[i]
-			if v.PsLevel == 0 {
-				temp := SpPermission{
-					ID:       v.PsID,
-					AuthName: v.PsName,
-					Level:    v.PsLevel,
-					Pid:      fmt.Sprintf("%d", v.PsPid),
-					Path:     perApiMap[v.PsPid].PsAPIPath,
-					Children: make([]SpPermission, 0),
+		result = buildPermissionTree(perList, perApiMap)
+	}
+	return result, nil
+}
+
+func buildPermissionTree(perList []*dao.SpPermission, perApiMap map[int]*dao.SpPermissionApi) []*SpPermission{
+	result := make([]*SpPermission, 0)
+	for i := 0; i < len(perList); i++ {
+		v := perList[i]
+		if v.PsLevel == 0 {
+			temp := &SpPermission{
+				ID:       v.PsID,
+				AuthName: v.PsName,
+				Level:    v.PsLevel,
+				Pid:      v.PsPid,
+				//Path:     perApiMap[v.PsPid].PsAPIPath,
+				Children: make([]*SpPermission, 0),
+			}
+			result = append(result, temp)
+		}
+	}
+	level2 := make(map[int]*SpPermission)
+	for i := 0; i < len(perList); i++ {
+		v := perList[i]
+		if v.PsLevel == 1 {
+			temp := &SpPermission{
+				ID:       v.PsID,
+				AuthName: v.PsName,
+				Level:    v.PsLevel,
+				Pid:      v.PsPid,
+				Path:     perApiMap[v.PsPid].PsAPIPath,
+				Children: make([]*SpPermission, 0),
+			}
+			for j := 0; j<len(result);j++{
+				if result[j].ID == temp.Pid{
+					result[j].Children = append(result[j].Children, temp)
+					level2[temp.ID] = result[j]
 				}
-				result = append(result, temp)
 			}
 		}
 	}
-	return result, nil
+	for i := 0; i < len(perList); i++ {
+		v := perList[i]
+		if v.PsLevel == 2 {
+			temp := &SpPermission{
+				ID:       v.PsID,
+				AuthName: v.PsName,
+				Level:    v.PsLevel,
+				Pid:      v.PsPid,
+				Path:     perApiMap[v.PsPid].PsAPIPath,
+				Children: nil,
+			}
+			if v, ok:= level2[temp.Pid]; ok{
+				for j := 0; j<len(v.Children);j++{
+					if v.Children[j].ID == temp.Pid{
+						v.Children[j].Children = append(v.Children[j].Children, temp)
+					}
+				}
+			}
+		}
+	}
+	return result
 }
 
 func NewSpPermissionService(permissionDao dao.ISpPermission, permissionApiDao dao.ISpPermissionApi) ISpPermissionService {

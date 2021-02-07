@@ -68,6 +68,8 @@ func NewRouter() *gin.Engine {
 		userGroup.PUT("/users/:id/role", spController.SetRole)
 		// 权限管理
 		userGroup.GET("/rights/:type", perController.GetRights)
+		// todo：完善本接口
+		userGroup.GET("/menus", perController.GetRights)
 	}
 	return r
 }
