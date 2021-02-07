@@ -55,6 +55,10 @@ func NewRouter() *gin.Engine {
 	perService := service.NewSpPermissionService(perManager, perApiManager)
 	perController := v1.NewSpPermissionController(perService)
 
+	roleManager := dao.NewSpRoleManager("sp_role", global.DBEngine)
+	roleService := service.NewSpRoleService(roleManager, perManager)
+	roleController := v1.NewSpRoleController(roleService)
+
 	userGroup := r.Group("/api/private/v1/")
 	{
 		userGroup.POST("/login", spController.Login)
@@ -68,8 +72,9 @@ func NewRouter() *gin.Engine {
 		userGroup.PUT("/users/:id/role", spController.SetRole)
 		// 权限管理
 		userGroup.GET("/rights/:type", perController.GetRights)
-		// todo：完善本接口
-		userGroup.GET("/menus", perController.GetRights)
+		userGroup.GET("/menus", perController.GetMenus)
+
+		userGroup.GET("/roles", roleController.GetRoleList)
 	}
 	return r
 }

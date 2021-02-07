@@ -44,3 +44,17 @@ func (s SpPermissionController) GetRights(c *gin.Context) {
 	}
 	response.ToResponse(result, "获取权限列表成功", http.StatusOK)
 }
+
+func (s SpPermissionController) GetMenus(c *gin.Context) {
+	response := app.NewResponse(c)
+	param := service.GetRightsRequest{
+		Type: "tree",
+	}
+	result, err := s.SpPermissionService.GetRights(&param)
+	if err != nil {
+		global.Logger.Errorf(c, "SpPermissionService.GetMenus errs: %v", err)
+		response.ToErrorResponse(errcode.ErrorGetRightsFail)
+		return
+	}
+	response.ToResponse(result, "获取菜单列表成功", http.StatusOK)
+}

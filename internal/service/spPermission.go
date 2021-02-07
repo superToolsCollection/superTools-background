@@ -17,7 +17,7 @@ type GetRightsRequest struct {
 type SpPermission struct {
 	ID       int    `json:"id"`
 	AuthName string `json:"authName"`
-	Pid      int `json:"pid"`
+	Pid      int    `json:"pid"`
 	Level    int    `json:"level"`
 	Path     string `json:"path"`
 	Children []*SpPermission
@@ -60,12 +60,12 @@ func (s *SpPermissionService) GetRights(param *GetRightsRequest) ([]*SpPermissio
 			}
 		}
 	} else {
-		result = buildPermissionTree(perList, perApiMap)
+		result = buildPermissionTree(perList)
 	}
 	return result, nil
 }
 
-func buildPermissionTree(perList []*dao.SpPermission, perApiMap map[int]*dao.SpPermissionApi) []*SpPermission{
+func buildPermissionTree(perList []*dao.SpPermission) []*SpPermission {
 	result := make([]*SpPermission, 0)
 	for i := 0; i < len(perList); i++ {
 		v := perList[i]
@@ -90,11 +90,11 @@ func buildPermissionTree(perList []*dao.SpPermission, perApiMap map[int]*dao.SpP
 				AuthName: v.PsName,
 				Level:    v.PsLevel,
 				Pid:      v.PsPid,
-				Path:     perApiMap[v.PsPid].PsAPIPath,
+				//Path:     perApiMap[v.PsPid].PsAPIPath,
 				Children: make([]*SpPermission, 0),
 			}
-			for j := 0; j<len(result);j++{
-				if result[j].ID == temp.Pid{
+			for j := 0; j < len(result); j++ {
+				if result[j].ID == temp.Pid {
 					result[j].Children = append(result[j].Children, temp)
 					level2[temp.ID] = result[j]
 				}
@@ -109,12 +109,12 @@ func buildPermissionTree(perList []*dao.SpPermission, perApiMap map[int]*dao.SpP
 				AuthName: v.PsName,
 				Level:    v.PsLevel,
 				Pid:      v.PsPid,
-				Path:     perApiMap[v.PsPid].PsAPIPath,
+				//Path:     perApiMap[v.PsPid].PsAPIPath,
 				Children: nil,
 			}
-			if v, ok:= level2[temp.Pid]; ok{
-				for j := 0; j<len(v.Children);j++{
-					if v.Children[j].ID == temp.Pid{
+			if v, ok := level2[temp.Pid]; ok {
+				for j := 0; j < len(v.Children); j++ {
+					if v.Children[j].ID == temp.Pid {
 						v.Children[j].Children = append(v.Children[j].Children, temp)
 					}
 				}
