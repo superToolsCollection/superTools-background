@@ -21,6 +21,7 @@ type SpRole struct {
 
 type ISpRole interface {
 	Select() ([]*SpRole, error)
+	Insert(role *SpRole) (*SpRole, error)
 }
 
 type SpRoleManager struct {
@@ -48,4 +49,25 @@ func (m *SpRoleManager) Select() ([]*SpRole, error) {
 		result[i].RoleName = roleList[i].RoleName
 	}
 	return result, nil
+}
+
+func (m *SpRoleManager) Insert(role *SpRole) (*SpRole, error) {
+	s := &model.SpRole{
+		RoleDesc: role.RoleDesc,
+		RoleID:   role.RoleID,
+		RoleName: role.RoleName,
+		PsIds:    role.PsIds,
+		PsCa:     role.PsCa,
+	}
+	result := m.conn.Create(s)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &SpRole{
+		RoleDesc: s.RoleDesc,
+		RoleID:   s.RoleID,
+		RoleName: s.RoleName,
+		PsIds:    s.PsIds,
+		PsCa:     s.PsCa,
+	}, nil
 }

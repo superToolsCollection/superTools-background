@@ -8,4 +8,5 @@ package errcode
 
 var (
 	ErrorGetRoleListFail = NewError(30010001, "获取角色列表失败")
+	ErrorAddRoleFail = NewError(30010002, "添加角色失败")
 )

@@ -11,6 +11,10 @@ import (
 * @Date: 2021-02-07 20:24
 * @Description:
 **/
+type AddRoleRequest struct {
+	RoleName string `form:"role_name" binding:"required,min=2,max=4294967295"`
+	RoleDesc string `form:"role_desc"`
+}
 
 type SpRole struct {
 	RoleID   int             `json:"role_id"`
@@ -22,6 +26,7 @@ type SpRole struct {
 
 type ISpRoleService interface {
 	GetRoles() ([]*SpRole, error)
+	AddRole(param *AddRoleRequest) (*SpRole, error)
 }
 
 type SpRoleService struct {
@@ -67,4 +72,20 @@ func (s *SpRoleService) GetRoles() ([]*SpRole, error) {
 		result[i] = temp
 	}
 	return result, nil
+}
+
+func (s *SpRoleService) AddRole(param *AddRoleRequest) (*SpRole, error) {
+	role := &dao.SpRole{
+		RoleName: param.RoleName,
+		RoleDesc: param.RoleDesc,
+	}
+	result, err := s.roleDao.Insert(role)
+	if err != nil {
+		return nil, err
+	}
+	return &SpRole{
+		RoleDesc: result.RoleDesc,
+		RoleID:   result.RoleID,
+		RoleName: result.RoleName,
+	}, nil
 }

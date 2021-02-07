@@ -19,11 +19,11 @@ type SpRoleController struct {
 	Service service.ISpRoleService
 }
 
-func NewSpRoleController(service service.ISpRoleService) SpRoleController{
-	return SpRoleController{Service:service}
+func NewSpRoleController(service service.ISpRoleService) SpRoleController {
+	return SpRoleController{Service: service}
 }
 
-func (s SpRoleController) GetRoleList(c *gin.Context){
+func (s SpRoleController) GetRoleList(c *gin.Context) {
 	response := app.NewResponse(c)
 	result, err := s.Service.GetRoles()
 	if err != nil {
@@ -32,4 +32,22 @@ func (s SpRoleController) GetRoleList(c *gin.Context){
 		return
 	}
 	response.ToResponse(result, "获取成功", http.StatusOK)
+}
+
+func (s SpRoleController) AddRole(c *gin.Context) {
+	param := service.AddRoleRequest{}
+	response := app.NewResponse(c)
+	valid, errs := app.BindAndValid(c, &param)
+	if !valid {
+		global.Logger.Errorf(c, "app.BindAndValid errs: %v", errs)
+		response.ToErrorResponse(errcode.InvalidParams.WithDetails(errs.Errors()...))
+		return
+	}
+	result, err := s.Service.AddRole(&param)
+	if err != nil {
+		global.Logger.Errorf(c, "SpRoleService.AddRole errs: %v", errs)
+		response.ToErrorResponse(errcode.ErrorAddRoleFail)
+		return
+	}
+	response.ToResponse(result, "创建成功", http.StatusCreated)
 }
