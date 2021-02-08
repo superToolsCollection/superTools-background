@@ -107,7 +107,7 @@ func (s SpRoleController) DeleteRole(c *gin.Context) {
 	idStr := strings.TrimSpace(c.Param("id"))
 	if idStr == "" || len(idStr) == 0 {
 		global.Logger.Errorf(c, "SpRoleService.DeleteRole errs: %v", errors.New("wrong id"))
-		response.ToErrorResponse(errcode.ErrorUpdateRoleFail)
+		response.ToErrorResponse(errcode.ErrorDeleteRoleFail)
 		return
 	}
 	id := convert.StrTo(idStr).MustInt64()
@@ -115,8 +115,66 @@ func (s SpRoleController) DeleteRole(c *gin.Context) {
 	err := s.Service.DeleteRole(&param)
 	if err != nil {
 		global.Logger.Errorf(c, "SpRoleService.DeleteRole errs: %v", err)
-		response.ToErrorResponse(errcode.ErrorUpdateRoleFail)
+		response.ToErrorResponse(errcode.ErrorDeleteRoleFail)
 		return
 	}
 	response.ToResponse(gin.H{}, "删除成功", http.StatusOK)
+}
+
+func (s SpRoleController) UpdateRights(c *gin.Context) {
+	param := service.UpdateRightRequest{}
+	response := app.NewResponse(c)
+	idStr := strings.TrimSpace(c.Param("roleId"))
+	if idStr == "" || len(idStr) == 0 {
+		global.Logger.Errorf(c, "SpRoleService.UpdateRights errs: %v", errors.New("wrong id"))
+		response.ToErrorResponse(errcode.ErrorUpdateRightFail)
+		return
+	}
+	id := convert.StrTo(idStr).MustInt64()
+	param.RoleID = int(id)
+	valid, errs := app.BindAndValid(c, &param)
+	if !valid {
+		global.Logger.Errorf(c, "app.BindAndValid errs: %v", errs)
+		response.ToErrorResponse(errcode.InvalidParams.WithDetails(errs.Errors()...))
+		return
+	}
+
+	err := s.Service.UpdateRight(&param)
+	if err != nil {
+		global.Logger.Errorf(c, "SpRoleService.DeleteRole errs: %v", err)
+		response.ToErrorResponse(errcode.ErrorUpdateRoleFail)
+		return
+	}
+	response.ToResponse(gin.H{}, "更新成功", http.StatusOK)
+}
+
+func (s SpRoleController) DeleteRight(c *gin.Context) {
+	param := service.DeleteRightRequest{}
+	response := app.NewResponse(c)
+	idStr := strings.TrimSpace(c.Param("id"))
+	if idStr == "" || len(idStr) == 0 {
+		global.Logger.Errorf(c, "SpRoleService.DeleteRight errs: %v", errors.New("wrong id"))
+		response.ToErrorResponse(errcode.ErrorDeleteRightFail)
+		return
+	}
+	id := convert.StrTo(idStr).MustInt64()
+	param.RoleID = int(id)
+
+	rightIdStr := strings.TrimSpace(c.Param("id"))
+	if idStr == "" || len(idStr) == 0 {
+		global.Logger.Errorf(c, "SpRoleService.DeleteRight errs: %v", errors.New("wrong id"))
+		response.ToErrorResponse(errcode.ErrorDeleteRightFail)
+		return
+	}
+	rightId := convert.StrTo(rightIdStr).MustInt64()
+	param.RightId = int(rightId)
+
+	err := s.Service.DeleteRight(&param)
+	if err != nil {
+		global.Logger.Errorf(c, "SpRoleService.DeleteRight errs: %v", err)
+		response.ToErrorResponse(errcode.ErrorDeleteRightFail)
+		return
+	}
+	role, err := s.Service.GetRoleByID(&service.GetRoleByIdRequest{ID:int(id)})
+	response.ToResponse(role.Children, "取消权限成功", http.StatusOK)
 }

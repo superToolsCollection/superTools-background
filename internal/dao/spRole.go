@@ -25,6 +25,7 @@ type ISpRole interface {
 	Insert(role *SpRole) (*SpRole, error)
 	Update(role *SpRole) (*SpRole, error)
 	Delete(role *SpRole) error
+	UpdateRight(role *SpRole) error
 }
 
 type SpRoleManager struct {
@@ -63,6 +64,7 @@ func (m *SpRoleManager) SelectByID(id int) (*SpRole, error) {
 	return &SpRole{
 		RoleID:   role.RoleID,
 		RoleName: role.RoleName,
+		PsIds:role.PsIds,
 		RoleDesc: role.RoleDesc,
 	}, nil
 }
@@ -106,6 +108,17 @@ func (m *SpRoleManager) Update(role *SpRole) (*SpRole, error) {
 
 func (m *SpRoleManager) Delete(role *SpRole) error {
 	result := m.conn.Where("role_id = ?", role.RoleID).Delete(model.SpManager{})
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (m *SpRoleManager) UpdateRight(role *SpRole) error{
+	r := &model.SpRole{}
+	result := m.conn.Model(r).
+		Where("role_id=?", role.RoleID).
+		Update("ps_ids", role.PsIds)
 	if result.Error != nil {
 		return result.Error
 	}

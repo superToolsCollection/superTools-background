@@ -79,9 +79,8 @@ func NewRouter() *gin.Engine {
 		userGroup.GET("/roles/:id", roleController.GetRoleById)
 		userGroup.PUT("/roles/:id", roleController.UpdateRole)
 		userGroup.DELETE("/roles/:id", roleController.DeleteRole)
-		//todo
-		userGroup.POST("/roles/:roleId/rights", roleController.DeleteRole)
-		userGroup.DELETE("/roles/:roleId/rights/:rightId", roleController.DeleteRole)
+		userGroup.POST("/roles/:id/rights", roleController.UpdateRights)
+		userGroup.DELETE("/roles/:id/rights/:rightId", roleController.DeleteRight)
 	}
 	return r
 }

@@ -12,4 +12,6 @@ var (
 	ErrorGetRoleByIdFail = NewError(30010003, "获取角色失败")
 	ErrorUpdateRoleFail  = NewError(30010004, "更新角色失败")
 	ErrorDeleteRoleFail  = NewError(30010005, "删除角色失败")
+	ErrorUpdateRightFail  = NewError(30010006, "更新角色权限失败")
+	ErrorDeleteRightFail  = NewError(30010007, "删除角色权限失败")
 )
