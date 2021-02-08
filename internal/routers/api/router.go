@@ -87,7 +87,7 @@ func NewRouter() *gin.Engine {
 		userGroup.POST("/roles/:id/rights", roleController.UpdateRights)
 		userGroup.DELETE("/roles/:id/rights/:rightId", roleController.DeleteRight)
 		//商品分类
-		userGroup.GET("/categories", categoryController.GetCateforiesList)
+		userGroup.GET("/categories", categoryController.GetCategoriesList)
 	}
 	return r
 }

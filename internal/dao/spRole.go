@@ -64,7 +64,7 @@ func (m *SpRoleManager) SelectByID(id int) (*SpRole, error) {
 	return &SpRole{
 		RoleID:   role.RoleID,
 		RoleName: role.RoleName,
-		PsIds:role.PsIds,
+		PsIds:    role.PsIds,
 		RoleDesc: role.RoleDesc,
 	}, nil
 }
@@ -114,7 +114,7 @@ func (m *SpRoleManager) Delete(role *SpRole) error {
 	return nil
 }
 
-func (m *SpRoleManager) UpdateRight(role *SpRole) error{
+func (m *SpRoleManager) UpdateRight(role *SpRole) error {
 	r := &model.SpRole{}
 	result := m.conn.Model(r).
 		Where("role_id=?", role.RoleID).

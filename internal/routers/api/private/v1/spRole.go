@@ -175,6 +175,6 @@ func (s SpRoleController) DeleteRight(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorDeleteRightFail)
 		return
 	}
-	role, err := s.Service.GetRoleByID(&service.GetRoleByIdRequest{ID:int(id)})
+	role, err := s.Service.GetRoleByID(&service.GetRoleByIdRequest{ID: int(id)})
 	response.ToResponse(role.Children, "取消权限成功", http.StatusOK)
 }

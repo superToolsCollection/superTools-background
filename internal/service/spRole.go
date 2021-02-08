@@ -36,7 +36,7 @@ type UpdateRightRequest struct {
 }
 
 type DeleteRightRequest struct {
-	RoleID  int    `form:"roleId"`
+	RoleID  int `form:"roleId"`
 	RightId int `form:"rightId"`
 }
 
@@ -161,8 +161,8 @@ func (s *SpRoleService) DeleteRole(param *DeleteRoleRequest) error {
 
 func (s *SpRoleService) UpdateRight(param *UpdateRightRequest) error {
 	role := &dao.SpRole{
-		RoleID:param.RoleID,
-		PsIds:param.Rids,
+		RoleID: param.RoleID,
+		PsIds:  param.Rids,
 	}
 	err := s.roleDao.UpdateRight(role)
 	if err != nil {
@@ -173,14 +173,14 @@ func (s *SpRoleService) UpdateRight(param *UpdateRightRequest) error {
 
 func (s *SpRoleService) DeleteRight(param *DeleteRightRequest) error {
 	role, err := s.roleDao.SelectByID(param.RoleID)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 	idStrs := strings.Split(role.PsIds, ",")
 	ids := make([]string, 0)
 	for j := 0; j < len(idStrs); j++ {
-		t:= idStrs[j]
-		if t == strconv.Itoa(param.RightId){
+		t := idStrs[j]
+		if t == strconv.Itoa(param.RightId) {
 			continue
 		}
 		ids = append(ids, t)
