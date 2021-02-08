@@ -59,6 +59,10 @@ func NewRouter() *gin.Engine {
 	roleService := service.NewSpRoleService(roleManager, perManager)
 	roleController := v1.NewSpRoleController(roleService)
 
+	categoryManager := dao.NewSpCategoryManager("sp_category", global.DBEngine)
+	categoryService := service.NewSpCategoryService(categoryManager)
+	categoryController := v1.NewSpCategoryController(categoryService)
+
 	userGroup := r.Group("/api/private/v1/")
 	{
 		userGroup.POST("/login", spController.Login)
@@ -74,6 +78,7 @@ func NewRouter() *gin.Engine {
 		userGroup.GET("/rights/:type", perController.GetRights)
 		userGroup.GET("/menus", perController.GetMenus)
 
+		//角色相关
 		userGroup.GET("/roles", roleController.GetRoleList)
 		userGroup.POST("/roles", roleController.AddRole)
 		userGroup.GET("/roles/:id", roleController.GetRoleById)
@@ -81,6 +86,8 @@ func NewRouter() *gin.Engine {
 		userGroup.DELETE("/roles/:id", roleController.DeleteRole)
 		userGroup.POST("/roles/:id/rights", roleController.UpdateRights)
 		userGroup.DELETE("/roles/:id/rights/:rightId", roleController.DeleteRight)
+		//商品分类
+		userGroup.GET("/categories", categoryController.GetCateforiesList)
 	}
 	return r
 }
