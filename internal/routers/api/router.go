@@ -32,7 +32,15 @@ var methodLimiters = limiter.NewMethodLimiter().AddBuckets(
 
 func NewRouter() *gin.Engine {
 	r := gin.New()
-	r.Use(cors.Default())
+	//r.Use(cors.Default())
+	conf := cors.Config{
+		AllowAllOrigins:true,
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Accept", "Authorization","X-Requested-With","Content-Length", "Content-Type", "X-Requested-With, mytoken", "X-Requested-With, Authorization"},
+		AllowCredentials: false,
+		MaxAge:           12 * time.Hour,
+	}
+	r.Use(cors.New(conf))
 	if global.ServerSetting.RunMode == "debug" {
 		r.Use(gin.Logger())
 		r.Use(gin.Recovery())

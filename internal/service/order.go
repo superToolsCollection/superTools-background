@@ -1,8 +1,6 @@
 package service
 
 import (
-	"fmt"
-
 	"superTools-background/internal/dao"
 	"superTools-background/pkg/app"
 )
@@ -117,7 +115,6 @@ func (s *OrderService) GetOrderList(pager *app.Pager) ([]*Order, error) {
 }
 
 func (s *OrderService) GetOrderByUserID(param *GetOrderByUserIDRequest) ([]*Order, error) {
-	fmt.Println("service user_id", param.UserID)
 	orders, err := s.orderDao.SelectByUser(param.UserID)
 	if err != nil {
 		return nil, err

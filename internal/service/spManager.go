@@ -14,7 +14,7 @@ import (
 **/
 
 type GetSpMangerRequest struct {
-	UserName string `form:"user_name" binding:"required,min=2,max=4294967295"`
+	UserName string `form:"username" binding:"required,min=2,max=4294967295"`
 	Password string `form:"password" binding:"required,min=2,max=4294967295"`
 }
 

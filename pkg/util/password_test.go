@@ -9,7 +9,7 @@ import "testing"
 **/
 
 func TestGeneratePassword(t *testing.T) {
-	bytes, err := GeneratePassword("admin")
+	bytes, err := GeneratePassword("adminadmin")
 	if err != nil {
 		t.Log(err)
 	}
