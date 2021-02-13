@@ -26,6 +26,8 @@ type ISpCategory interface {
 	SelectCategoriesList(treeType int, page int, pageSize int) ([]*SpCategory, error)
 	AddCategory(pid int, name string, level int) (*SpCategory, error)
 	GetCategoryById(id int) (*SpCategory, error)
+	UpdateCategory(id int, name string) (*SpCategory, error)
+	DeleteCategory(id int) error
 }
 
 type SpCategoryManager struct {
@@ -33,10 +35,32 @@ type SpCategoryManager struct {
 	conn  *gorm.DB
 }
 
+func (m *SpCategoryManager) DeleteCategory(id int) error {
+	result := m.conn.Where("cat_id = ?", id).Delete(model.SpCategory{})
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (m *SpCategoryManager) UpdateCategory(id int, name string) (*SpCategory, error) {
+	c := &model.SpCategory{}
+	result := m.conn.Model(c).Where("cat_id=?", id).Update("cat_name", name)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &SpCategory{
+		CatID:    c.CatID,
+		CatName:  c.CatName,
+		CatPid:   c.CatPid,
+		CatLevel: c.CatLevel,
+	}, nil
+}
+
 func (m *SpCategoryManager) GetCategoryById(id int) (*SpCategory, error) {
 	c := &model.SpCategory{}
-	result := m.conn.Where("id=?", id).Find(c)
-	if result.RecordNotFound() {
+	result := m.conn.Where("cat_id=?", id).Find(c)
+	if result.Error != nil {
 		return nil, result.Error
 	}
 	return &SpCategory{

@@ -24,6 +24,15 @@ type GetCategoryByIdRequest struct {
 	Id int `form:"id"`
 }
 
+type UpdateCategoryRequest struct {
+	Id      int    `form:"id"`
+	CatName string `form:"cat_name" binding:"required,min=2,max=4294967295"`
+}
+
+type DeleteCategoryRequest struct {
+	Id int `form:"id"`
+}
+
 type SpCategory struct {
 	CatID      int           `json:"cat_id"`
 	CatName    string        `json:"cat_name"`
@@ -37,10 +46,33 @@ type ISpCategoryService interface {
 	GetCategoriesList(param *GetCategoriesListRequest, pager *app.Pager) ([]*SpCategory, error)
 	AddCategory(param *AddCategoryRequest) (*SpCategory, error)
 	GetCategory(param *GetCategoryByIdRequest) (*SpCategory, error)
+	UpdateCategory(param *UpdateCategoryRequest) (*SpCategory, error)
+	DeleteCategory(param *DeleteCategoryRequest) error
 }
 
 type SpCategoryService struct {
 	dao dao.ISpCategory
+}
+
+func (s *SpCategoryService) DeleteCategory(param *DeleteCategoryRequest) error {
+	err := s.dao.DeleteCategory(param.Id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *SpCategoryService) UpdateCategory(param *UpdateCategoryRequest) (*SpCategory, error) {
+	category, err := s.dao.UpdateCategory(param.Id, param.CatName)
+	if err != nil {
+		return nil, err
+	}
+	return &SpCategory{
+		CatID:    category.CatID,
+		CatName:  category.CatName,
+		CatPid:   category.CatPid,
+		CatLevel: category.CatLevel,
+	}, nil
 }
 
 func (s *SpCategoryService) GetCategory(param *GetCategoryByIdRequest) (*SpCategory, error) {

@@ -82,3 +82,49 @@ func (s SpCategoryController) GetCategory(c *gin.Context) {
 	}
 	response.ToResponse(category, "获取成功", http.StatusOK)
 }
+
+func (s SpCategoryController) UpdateCategory(c *gin.Context) {
+	param := service.UpdateCategoryRequest{}
+	response := app.NewResponse(c)
+	idStr := strings.TrimSpace(c.Param("id"))
+	if idStr == "" || len(idStr) == 0 {
+		global.Logger.Errorf(c, "SpCategoryService.UpdateCategory errs: %v", errors.New("wrong id"))
+		response.ToErrorResponse(errcode.ErrorUpdateCategoryFail)
+		return
+	}
+	id := convert.StrTo(idStr).MustInt64()
+	param.Id = int(id)
+	valid, errs := app.BindAndValid(c, &param)
+	if !valid {
+		global.Logger.Errorf(c, "app.BindAndValid errs: %v", errs)
+		response.ToErrorResponse(errcode.InvalidParams.WithDetails(errs.Errors()...))
+		return
+	}
+	category, err := s.Service.UpdateCategory(&param)
+	if err != nil {
+		global.Logger.Errorf(c, "SpCategoryService.UpdateCategory err: %v", err)
+		response.ToErrorResponse(errcode.ErrorUpdateCategoryFail)
+		return
+	}
+	response.ToResponse(category, "更新成功", http.StatusOK)
+}
+
+func (s SpCategoryController) DeleteCategory(c *gin.Context){
+	param := service.DeleteCategoryRequest{}
+	response := app.NewResponse(c)
+	idStr := strings.TrimSpace(c.Param("id"))
+	if idStr == "" || len(idStr) == 0 {
+		global.Logger.Errorf(c, "SpCategoryService.DeleteCategory errs: %v", errors.New("wrong id"))
+		response.ToErrorResponse(errcode.ErrorDeleteCategoryFail)
+		return
+	}
+	id := convert.StrTo(idStr).MustInt64()
+	param.Id = int(id)
+	err := s.Service.DeleteCategory(&param)
+	if err != nil {
+		global.Logger.Errorf(c, "SpCategoryService.DeleteCategory err: %v", err)
+		response.ToErrorResponse(errcode.ErrorDeleteCategoryFail)
+		return
+	}
+	response.ToResponse(gin.H{}, "删除成功", http.StatusOK)
+}
