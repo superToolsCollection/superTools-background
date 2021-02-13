@@ -90,7 +90,8 @@ func (s *SpRoleService) GetRoles() ([]*SpRole, error) {
 		if err != nil {
 			return nil, err
 		}
-		perTree := buildPermissionTree(perList)
+		//todo 会有bug，map不能为空
+		perTree := buildPermissionTree(perList, nil)
 		temp := &SpRole{
 			RoleName: roleList[i].RoleName,
 			RoleID:   roleList[i].RoleID,

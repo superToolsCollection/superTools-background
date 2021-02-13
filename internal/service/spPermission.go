@@ -41,9 +41,9 @@ func (s *SpPermissionService) GetRights(param *GetRightsRequest) ([]*SpPermissio
 	if err != nil {
 		return nil, err
 	}
-	perApiMap := make(map[int]*dao.SpPermissionApi)
+	perApiMap := make(map[int]string)
 	for i := 0; i < len(perApiList); i++ {
-		perApiMap[perApiList[i].PsID] = perApiList[i]
+		perApiMap[perApiList[i].PsID] = perApiList[i].PsAPIPath
 	}
 	result := make([]*SpPermission, 0)
 	if param.Type == "list" {
@@ -55,17 +55,18 @@ func (s *SpPermissionService) GetRights(param *GetRightsRequest) ([]*SpPermissio
 					AuthName: v.PsName,
 					Level:    v.PsLevel,
 					Pid:      v.PsPid,
+					Path:  perApiMap[v.PsID],
 				}
 				result = append(result, temp)
 			}
 		}
 	} else {
-		result = buildPermissionTree(perList)
+		result = buildPermissionTree(perList, perApiMap)
 	}
 	return result, nil
 }
 
-func buildPermissionTree(perList []*dao.SpPermission) []*SpPermission {
+func buildPermissionTree(perList []*dao.SpPermission, perApiMap map[int]string) []*SpPermission {
 	result := make([]*SpPermission, 0)
 	for i := 0; i < len(perList); i++ {
 		v := perList[i]
@@ -75,7 +76,7 @@ func buildPermissionTree(perList []*dao.SpPermission) []*SpPermission {
 				AuthName: v.PsName,
 				Level:    v.PsLevel,
 				Pid:      v.PsPid,
-				//Path:     perApiMap[v.PsPid].PsAPIPath,
+				Path:     perApiMap[v.PsPid],
 				Children: make([]*SpPermission, 0),
 			}
 			result = append(result, temp)
@@ -90,7 +91,7 @@ func buildPermissionTree(perList []*dao.SpPermission) []*SpPermission {
 				AuthName: v.PsName,
 				Level:    v.PsLevel,
 				Pid:      v.PsPid,
-				//Path:     perApiMap[v.PsPid].PsAPIPath,
+				Path:     perApiMap[v.PsPid],
 				Children: make([]*SpPermission, 0),
 			}
 			for j := 0; j < len(result); j++ {
@@ -109,7 +110,7 @@ func buildPermissionTree(perList []*dao.SpPermission) []*SpPermission {
 				AuthName: v.PsName,
 				Level:    v.PsLevel,
 				Pid:      v.PsPid,
-				//Path:     perApiMap[v.PsPid].PsAPIPath,
+				Path:     perApiMap[v.PsPid],
 				Children: nil,
 			}
 			if v, ok := level2[temp.Pid]; ok {
