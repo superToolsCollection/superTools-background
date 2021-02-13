@@ -109,7 +109,7 @@ func (s SpCategoryController) UpdateCategory(c *gin.Context) {
 	response.ToResponse(category, "更新成功", http.StatusOK)
 }
 
-func (s SpCategoryController) DeleteCategory(c *gin.Context){
+func (s SpCategoryController) DeleteCategory(c *gin.Context) {
 	param := service.DeleteCategoryRequest{}
 	response := app.NewResponse(c)
 	idStr := strings.TrimSpace(c.Param("id"))

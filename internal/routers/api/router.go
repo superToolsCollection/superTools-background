@@ -71,6 +71,10 @@ func NewRouter() *gin.Engine {
 	categoryService := service.NewSpCategoryService(categoryManager)
 	categoryController := v1.NewSpCategoryController(categoryService)
 
+	attributeManager := dao.NewSpAttributeManager("sp_attribute", global.DBEngine)
+	attributeService := service.NewSpAttribute(attributeManager)
+	attributeController := v1.NewSpAttributeController(attributeService)
+
 	r.POST("/api/private/v1/login", spController.Login)
 	userGroup := r.Group("/api/private/v1/")
 	userGroup.Use(middleware.JWT())
@@ -102,6 +106,13 @@ func NewRouter() *gin.Engine {
 		userGroup.GET("/categories/:id", categoryController.GetCategory)
 		userGroup.PUT("/categories/:id", categoryController.UpdateCategory)
 		userGroup.DELETE("/categories/:id", categoryController.DeleteCategory)
+
+		//分类参数管理
+		userGroup.GET("categories/:id/attributes", attributeController.GetAttribute)
+		userGroup.POST("categories/:id/attributes", attributeController.AddAttribute)
+		userGroup.DELETE("categories/:id/attributes/:attrid", attributeController.DeleteAttribute)
+		userGroup.GET("categories/:id/attributes/:attrid", attributeController.GetAttributeById)
+		userGroup.PUT("categories/:id/attributes/:attrid", attributeController.UpdateAttribute)
 	}
 	return r
 }
