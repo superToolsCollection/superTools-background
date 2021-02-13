@@ -1,11 +1,14 @@
 package v1
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strings"
 	"superTools-background/global"
 	"superTools-background/internal/service"
 	"superTools-background/pkg/app"
+	"superTools-background/pkg/convert"
 	"superTools-background/pkg/errcode"
 )
 
@@ -42,7 +45,7 @@ func (s SpCategoryController) GetCategoriesList(c *gin.Context) {
 	response.ToResponse(list, "获取成功", http.StatusOK)
 }
 
-func (s SpCategoryController) AddCategory(c *gin.Context){
+func (s SpCategoryController) AddCategory(c *gin.Context) {
 	param := service.AddCategoryRequest{}
 	response := app.NewResponse(c)
 	valid, errs := app.BindAndValid(c, &param)
@@ -52,10 +55,30 @@ func (s SpCategoryController) AddCategory(c *gin.Context){
 		return
 	}
 	category, err := s.Service.AddCategory(&param)
-	if err != nil{
+	if err != nil {
 		global.Logger.Errorf(c, "SpCategoryService.AddCategory err: %v", err)
 		response.ToErrorResponse(errcode.ErrorAddCategoryFail)
 		return
 	}
 	response.ToResponse(category, "创建成功", http.StatusCreated)
+}
+
+func (s SpCategoryController) GetCategory(c *gin.Context) {
+	param := service.GetCategoryByIdRequest{}
+	response := app.NewResponse(c)
+	idStr := strings.TrimSpace(c.Param("id"))
+	if idStr == "" || len(idStr) == 0 {
+		global.Logger.Errorf(c, "SpCategoryService.GetCategory errs: %v", errors.New("wrong id"))
+		response.ToErrorResponse(errcode.ErrorGetCategoryFail)
+		return
+	}
+	id := convert.StrTo(idStr).MustInt64()
+	param.Id = int(id)
+	category, err := s.Service.GetCategory(&param)
+	if err != nil {
+		global.Logger.Errorf(c, "SpCategoryService.GetCategory err: %v", err)
+		response.ToErrorResponse(errcode.ErrorGetCategoryFail)
+		return
+	}
+	response.ToResponse(category, "获取成功", http.StatusOK)
 }

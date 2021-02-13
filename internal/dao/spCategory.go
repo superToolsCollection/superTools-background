@@ -25,11 +25,26 @@ type SpCategory struct {
 type ISpCategory interface {
 	SelectCategoriesList(treeType int, page int, pageSize int) ([]*SpCategory, error)
 	AddCategory(pid int, name string, level int) (*SpCategory, error)
+	GetCategoryById(id int) (*SpCategory, error)
 }
 
 type SpCategoryManager struct {
 	table string
 	conn  *gorm.DB
+}
+
+func (m *SpCategoryManager) GetCategoryById(id int) (*SpCategory, error) {
+	c := &model.SpCategory{}
+	result := m.conn.Where("id=?", id).Find(c)
+	if result.RecordNotFound() {
+		return nil, result.Error
+	}
+	return &SpCategory{
+		CatID:    c.CatID,
+		CatName:  c.CatName,
+		CatPid:   c.CatPid,
+		CatLevel: c.CatLevel,
+	}, nil
 }
 
 func (m *SpCategoryManager) AddCategory(pid int, name string, level int) (*SpCategory, error) {

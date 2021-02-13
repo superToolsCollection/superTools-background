@@ -99,7 +99,7 @@ func NewRouter() *gin.Engine {
 		//商品分类
 		userGroup.GET("/categories", categoryController.GetCategoriesList)
 		userGroup.POST("/categories", categoryController.AddCategory)
-		//userGroup.GET("/categories/:id", categoryController.GetCategory)
+		userGroup.GET("/categories/:id", categoryController.GetCategory)
 		//userGroup.PUT("/categories/:id", categoryController.UpdateCategory)
 		//userGroup.DELETE("/categories/:id", categoryController.DeleteCategory)
 	}

@@ -15,11 +15,11 @@ type GetRightsRequest struct {
 }
 
 type SpPermission struct {
-	ID       int    `json:"id"`
-	AuthName string `json:"authName"`
-	Pid      int    `json:"pid"`
-	Level    int    `json:"level"`
-	Path     string `json:"path"`
+	ID       int             `json:"id"`
+	AuthName string          `json:"authName"`
+	Pid      int             `json:"pid"`
+	Level    int             `json:"level"`
+	Path     string          `json:"path"`
 	Children []*SpPermission `json:"children"`
 }
 
@@ -55,7 +55,7 @@ func (s *SpPermissionService) GetRights(param *GetRightsRequest) ([]*SpPermissio
 					AuthName: v.PsName,
 					Level:    v.PsLevel,
 					Pid:      v.PsPid,
-					Path:  perApiMap[v.PsID],
+					Path:     perApiMap[v.PsID],
 				}
 				result = append(result, temp)
 			}
