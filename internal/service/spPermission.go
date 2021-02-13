@@ -20,7 +20,7 @@ type SpPermission struct {
 	Pid      int    `json:"pid"`
 	Level    int    `json:"level"`
 	Path     string `json:"path"`
-	Children []*SpPermission
+	Children []*SpPermission `json:"children"`
 }
 
 type ISpPermissionService interface {

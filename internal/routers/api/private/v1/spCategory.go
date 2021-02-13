@@ -41,3 +41,21 @@ func (s SpCategoryController) GetCategoriesList(c *gin.Context) {
 	}
 	response.ToResponse(list, "获取成功", http.StatusOK)
 }
+
+func (s SpCategoryController) AddCategory(c *gin.Context){
+	param := service.AddCategoryRequest{}
+	response := app.NewResponse(c)
+	valid, errs := app.BindAndValid(c, &param)
+	if !valid {
+		global.Logger.Errorf(c, "app.BindAndValid errs: %v", errs)
+		response.ToErrorResponse(errcode.InvalidParams.WithDetails(errs.Errors()...))
+		return
+	}
+	category, err := s.Service.AddCategory(&param)
+	if err != nil{
+		global.Logger.Errorf(c, "SpCategoryService.AddCategory err: %v", err)
+		response.ToErrorResponse(errcode.ErrorAddCategoryFail)
+		return
+	}
+	response.ToResponse(category, "创建成功", http.StatusCreated)
+}

@@ -14,6 +14,12 @@ type GetCategoriesListRequest struct {
 	Type int `form:"type"`
 }
 
+type AddCategoryRequest struct {
+	CatPid int `form:"cat_pid" binding:"required,gte=1"`
+	CatName string `form:"cat_name" binding:"required,min=2,max=4294967295"`
+	CatLevel int `form:"cat_level" binding:"required,gte=1"`
+}
+
 type SpCategory struct {
 	CatID      int           `json:"cat_id"`
 	CatName    string        `json:"cat_name"`
@@ -25,10 +31,24 @@ type SpCategory struct {
 
 type ISpCategoryService interface {
 	GetCategoriesList(param *GetCategoriesListRequest, pager *app.Pager) ([]*SpCategory, error)
+	AddCategory(param *AddCategoryRequest) (*SpCategory, error)
 }
 
 type SpCategoryService struct {
 	dao dao.ISpCategory
+}
+
+func (s *SpCategoryService) AddCategory(param *AddCategoryRequest) (*SpCategory, error) {
+	category, err := s.dao.AddCategory(param.CatPid, param.CatName, param.CatLevel)
+	if err != nil {
+		return nil, err
+	}
+	return &SpCategory{
+		CatID:category.CatID,
+		CatName:category.CatName,
+		CatPid:category.CatPid,
+		CatLevel:category.CatLevel,
+	}, nil
 }
 
 func (s *SpCategoryService) GetCategoriesList(param *GetCategoriesListRequest, pager *app.Pager) ([]*SpCategory, error) {
@@ -56,7 +76,7 @@ func buildTree(list []*dao.SpCategory, treeType int) []*SpCategory {
 			result = append(result, temp)
 		}
 	}
-	if treeType == 1{
+	if treeType == 1 {
 		return result
 	}
 	level2 := make(map[int]*SpCategory)

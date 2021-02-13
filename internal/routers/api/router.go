@@ -34,9 +34,9 @@ func NewRouter() *gin.Engine {
 	r := gin.New()
 	//r.Use(cors.Default())
 	conf := cors.Config{
-		AllowAllOrigins:true,
+		AllowAllOrigins:  true,
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Accept", "Authorization","X-Requested-With","Content-Length", "Content-Type", "X-Requested-With, mytoken", "X-Requested-With, Authorization"},
+		AllowHeaders:     []string{"Origin", "Accept", "Authorization", "X-Requested-With", "Content-Length", "Content-Type", "X-Requested-With, mytoken", "X-Requested-With, Authorization"},
 		AllowCredentials: false,
 		MaxAge:           12 * time.Hour,
 	}
@@ -71,9 +71,10 @@ func NewRouter() *gin.Engine {
 	categoryService := service.NewSpCategoryService(categoryManager)
 	categoryController := v1.NewSpCategoryController(categoryService)
 
+	r.POST("/api/private/v1/login", spController.Login)
 	userGroup := r.Group("/api/private/v1/")
+	userGroup.Use(middleware.JWT())
 	{
-		userGroup.POST("/login", spController.Login)
 		//用户管理
 		userGroup.GET("/users", spController.Users)
 		userGroup.POST("/users", spController.AddUser)
@@ -94,8 +95,13 @@ func NewRouter() *gin.Engine {
 		userGroup.DELETE("/roles/:id", roleController.DeleteRole)
 		userGroup.POST("/roles/:id/rights", roleController.UpdateRights)
 		userGroup.DELETE("/roles/:id/rights/:rightId", roleController.DeleteRight)
+
 		//商品分类
 		userGroup.GET("/categories", categoryController.GetCategoriesList)
+		userGroup.POST("/categories", categoryController.AddCategory)
+		//userGroup.GET("/categories/:id", categoryController.GetCategory)
+		//userGroup.PUT("/categories/:id", categoryController.UpdateCategory)
+		//userGroup.DELETE("/categories/:id", categoryController.DeleteCategory)
 	}
 	return r
 }

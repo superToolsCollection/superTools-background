@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 
@@ -20,10 +21,11 @@ func JWT() gin.HandlerFunc {
 			token string
 			ecode = errcode.Success
 		)
-		if s, exist := c.GetQuery("token"); exist {
+		fmt.Println("jwtjwt")
+		if s, exist := c.GetQuery("Authorization"); exist {
 			token = s
 		} else {
-			token = c.GetHeader("token")
+			token = c.GetHeader("Authorization")
 		}
 		if token == "" {
 			ecode = errcode.InvalidParams
