@@ -11,6 +11,7 @@ import (
 )
 
 type ServerSettingS struct {
+	IP           string
 	RunMode      string
 	HttpPort     string
 	ReadTimeout  time.Duration

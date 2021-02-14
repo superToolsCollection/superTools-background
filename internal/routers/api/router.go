@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
+	"net/http"
 	_ "superTools-background/docs"
 	"superTools-background/global"
 	"superTools-background/internal/dao"
@@ -75,6 +76,13 @@ func NewRouter() *gin.Engine {
 	attributeService := service.NewSpAttribute(attributeManager)
 	attributeController := v1.NewSpAttributeController(attributeService)
 
+	goodManager := dao.NewSpGoodManager("sp_goods", global.DBEngine)
+	goodService := service.NewSpGoodService(goodManager)
+	goodController := v1.NewSpGoodController(goodService)
+
+	uploadController := NewUpload()
+
+	r.StaticFS("/static", http.Dir(global.AppSetting.UploadSavePath))
 	r.POST("/api/private/v1/login", spController.Login)
 	userGroup := r.Group("/api/private/v1/")
 	userGroup.Use(middleware.JWT())
@@ -108,11 +116,20 @@ func NewRouter() *gin.Engine {
 		userGroup.DELETE("/categories/:id", categoryController.DeleteCategory)
 
 		//分类参数管理
-		userGroup.GET("categories/:id/attributes", attributeController.GetAttribute)
-		userGroup.POST("categories/:id/attributes", attributeController.AddAttribute)
-		userGroup.DELETE("categories/:id/attributes/:attrid", attributeController.DeleteAttribute)
-		userGroup.GET("categories/:id/attributes/:attrid", attributeController.GetAttributeById)
-		userGroup.PUT("categories/:id/attributes/:attrid", attributeController.UpdateAttribute)
+		userGroup.GET("/categories/:id/attributes", attributeController.GetAttribute)
+		userGroup.POST("/categories/:id/attributes", attributeController.AddAttribute)
+		userGroup.DELETE("/categories/:id/attributes/:attrid", attributeController.DeleteAttribute)
+		userGroup.GET("/categories/:id/attributes/:attrid", attributeController.GetAttributeById)
+		userGroup.PUT("/categories/:id/attributes/:attrid", attributeController.UpdateAttribute)
+
+		userGroup.POST("/upload", uploadController.UploadFile)
+
+		//商品管理
+		userGroup.GET("/goods", goodController.GetGoodList)
+		userGroup.POST("/goods", goodController.AddGood)
+		userGroup.GET("/goods/:id", goodController.GetGoodById)
+		userGroup.PUT("/goods/:id", goodController.UpdateGood)
+		userGroup.DELETE("/goods/:id", goodController.DeleteGood)
 	}
 	return r
 }

@@ -39,7 +39,7 @@ func (s SpManagerController) Login(c *gin.Context) {
 	spManager, err := s.SpManagerService.GetSpManager(&param)
 	if err != nil {
 		global.Logger.Errorf(c, "svc.SignIn err: %v", err)
-		response.ToErrorResponse(errcode.ErrorUserSignInFail)
+		response.ToErrorResponse(errcode.ErrorUserSignInFail.WithDetails(err.Error()))
 		return
 	}
 

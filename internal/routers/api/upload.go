@@ -55,6 +55,7 @@ func (u Upload) UploadFile(c *gin.Context) {
 	}
 
 	response.ToResponse(gin.H{
-		"file_access_url": fileInfo.AccessUrl,
-	}, "文件上传成功", http.StatusOK)
+		"temp_path": fileInfo.TempPath,
+		"url":       fileInfo.Url,
+	}, "上传成功", http.StatusOK)
 }

@@ -16,27 +16,28 @@ import (
 **/
 
 type FileInfo struct {
-	Name      string
-	AccessUrl string
+	Name     string `json:"name"`
+	TempPath string `json:"temp_path"`
+	Url      string `json:"url"`
 }
 
 func (svc *Service) UploadFile(fileType upload.FileType, file multipart.File, fileHeader *multipart.FileHeader) (*FileInfo, error) {
 	fileName := upload.GetFileName(fileHeader.Filename)
 	if !upload.CheckContainExt(fileType, fileName) {
-		return nil, errors.New("file suffix is not supported.")
+		return nil, errors.New("file suffix is not supported")
 	}
 	if upload.CheckMaxSize(fileType, file) {
-		return nil, errors.New("exceeded maximum file limit.")
+		return nil, errors.New("exceeded maximum file limit")
 	}
 
 	uploadSavePath := upload.GetSavePath()
 	if upload.CheckSavePath(uploadSavePath) {
 		if err := upload.CreateSavePath(uploadSavePath, os.ModePerm); err != nil {
-			return nil, errors.New("failed to create save directory.")
+			return nil, errors.New("failed to create save directory")
 		}
 	}
 	if upload.CheckPermission(uploadSavePath) {
-		return nil, errors.New("insufficient file permissions.")
+		return nil, errors.New("insufficient file permissions")
 	}
 
 	dst := uploadSavePath + "/" + fileName
@@ -44,6 +45,7 @@ func (svc *Service) UploadFile(fileType upload.FileType, file multipart.File, fi
 		return nil, err
 	}
 
-	accessUrl := global.AppSetting.UploadServerUrl + "/" + fileName
-	return &FileInfo{Name: fileName, AccessUrl: accessUrl}, nil
+	accessUrl := uploadSavePath + "/" + fileName
+	url := global.AppSetting.UploadServerUrl + "/" + accessUrl
+	return &FileInfo{Name: fileName, TempPath: accessUrl, Url: url}, nil
 }
