@@ -41,8 +41,8 @@ type DeleteRightRequest struct {
 }
 
 type SpRole struct {
-	RoleID   int             `json:"role_id"`
-	RoleName string          `json:"role_name"`
+	RoleID   int             `json:"id"`
+	RoleName string          `json:"roleName"`
 	Children []*SpPermission `json:"children"`
 	PsCa     string          `json:"ps_ca"`
 	RoleDesc string          `json:"role_desc"`

@@ -54,11 +54,11 @@ type SetRoleRequest struct {
 }
 
 type SpManager struct {
-	MgMobile string `json:"mg_mobile"`
-	MgEmail  string `json:"mg_email"`
+	MgMobile string `json:"mobile"`
+	MgEmail  string `json:"email"`
 	MgState  int    `json:"mg_state"`
-	MgID     int    `json:"mg_id"`
-	MgName   string `json:"mg_name"`
+	MgID     int    `json:"id"`
+	MgName   string `json:"username"`
 	MgPwd    string `json:"mg_pwd"`
 	MgTime   int64  `json:"mg_time"`
 	RoleID   int    `json:"role_id"`
