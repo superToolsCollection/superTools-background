@@ -1,7 +1,7 @@
 package global
 
 import (
-	"github.com/garyburd/redigo/redis"
+	"github.com/go-redis/redis/v8"
 	"github.com/jinzhu/gorm"
 	"github.com/olivere/elastic/v7"
 	"github.com/streadway/amqp"
@@ -20,7 +20,7 @@ type RabbitMQ struct {
 
 var (
 	DBEngine       *gorm.DB
-	RedisEngine    *redis.Pool
+	RedisEngine    *redis.Client
 	RabbitMQEngine *RabbitMQ
 	ElasticEngine  *elastic.Client
 	MongoDBEngine  *mongo.Client

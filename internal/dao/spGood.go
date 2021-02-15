@@ -1,6 +1,10 @@
 package dao
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+	"superTools-background/internal/model"
+	"superTools-background/pkg/app"
+)
 
 /**
 * @Author: super
@@ -31,11 +35,46 @@ type SpGood struct {
 }
 
 type ISpGood interface {
+	SelectList(query string, page int, pageSize int) ([]*SpGood, int, error)
 }
 
 type SpGoodManager struct {
 	table string
 	conn  *gorm.DB
+}
+
+func (m *SpGoodManager) SelectList(query string, page int, pageSize int) ([]*SpGood, int, error) {
+	pageOffset := app.GetPageOffset(page, pageSize)
+	if pageOffset < 0 && pageSize < 0 {
+		pageOffset = 0
+		pageSize = 5
+	}
+	var spGoods []*model.SpGood
+	var count int
+	stmt := m.conn.Offset(pageOffset).Limit(pageSize).Find(&spGoods).Count(&count)
+	if stmt.Error != nil {
+		return nil, 0, stmt.Error
+	}
+	//stmt = stmt.Count(&count)
+	//if stmt.Error != nil {
+	//	return nil, 0, stmt.Error
+	//}
+
+	result := make([]*SpGood, len(spGoods))
+	for i, v := range spGoods {
+		result[i] = &SpGood{}
+		result[i].GoodsID = v.GoodsID
+		result[i].GoodsName = v.GoodsName
+		result[i].GoodsPrice = v.GoodsPrice
+		result[i].GoodsNumber = v.GoodsNumber
+		result[i].GoodsWeight = v.GoodsWeight
+		result[i].GoodsState = v.GoodsState
+		result[i].AddTime = v.AddTime
+		result[i].UpdTime = v.UpdTime
+		result[i].HotMumber = v.HotMumber
+		result[i].IsPromote = v.IsPromote
+	}
+	return result, count, nil
 }
 
 func NewSpGoodManager(table string, conn *gorm.DB) ISpGood {

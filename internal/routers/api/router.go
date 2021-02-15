@@ -84,9 +84,11 @@ func NewRouter() *gin.Engine {
 
 	r.StaticFS("/static", http.Dir(global.AppSetting.UploadSavePath))
 	r.POST("/api/private/v1/login", spController.Login)
+
 	userGroup := r.Group("/api/private/v1/")
 	userGroup.Use(middleware.JWT())
 	{
+		userGroup.POST("/logout", spController.Logout)
 		//用户管理
 		userGroup.GET("/users", spController.Users)
 		userGroup.POST("/users", spController.AddUser)
@@ -126,10 +128,10 @@ func NewRouter() *gin.Engine {
 
 		//商品管理
 		userGroup.GET("/goods", goodController.GetGoodList)
-		userGroup.POST("/goods", goodController.AddGood)
-		userGroup.GET("/goods/:id", goodController.GetGoodById)
-		userGroup.PUT("/goods/:id", goodController.UpdateGood)
-		userGroup.DELETE("/goods/:id", goodController.DeleteGood)
+		//userGroup.POST("/goods", goodController.AddGood)
+		//userGroup.GET("/goods/:id", goodController.GetGoodById)
+		//userGroup.PUT("/goods/:id", goodController.UpdateGood)
+		//userGroup.DELETE("/goods/:id", goodController.DeleteGood)
 	}
 	return r
 }

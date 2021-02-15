@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"github.com/garyburd/redigo/redis"
+	"github.com/go-redis/redis/v8"
 
 	"superTools-background/pkg/setting"
 
@@ -14,24 +14,12 @@ import (
 * @Description: 根据配置创建redis连接池
 **/
 
-func NewRedisEngine(cacheSetting *setting.CacheSettingS) (*redis.Pool, error) {
-	return &redis.Pool{
-		MaxIdle:     cacheSetting.MaxIdle,
-		MaxActive:   cacheSetting.MaxActive,
-		IdleTimeout: 300 * time.Second,
-		Dial: func() (redis.Conn, error) {
-			conn, err := redis.Dial("tcp", cacheSetting.Host)
-			if err != nil {
-				return nil, err
-			}
-			return conn, nil
-		},
-		TestOnBorrow: func(conn redis.Conn, t time.Time) error {
-			if time.Since(t) < time.Minute {
-				return nil
-			}
-			_, err := conn.Do("PING")
-			return err
-		},
-	}, nil
+func NewRedisEngine(cacheSetting *setting.CacheSettingS) (*redis.Client, error) {
+	client := redis.NewClient(&redis.Options{
+		Addr:cacheSetting.Host,
+		Password:cacheSetting.Password,
+		MaxRetries:5,
+		IdleTimeout:300 * time.Second,
+	})
+	return client, nil
 }

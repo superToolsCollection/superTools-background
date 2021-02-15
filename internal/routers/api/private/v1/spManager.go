@@ -43,21 +43,44 @@ func (s SpManagerController) Login(c *gin.Context) {
 		return
 	}
 
-	token, err := app.GenerateTokenByUserName(spManager.MgName)
+	u := app.User{
+		UserId: spManager.MgID,
+	}
+	td, err := app.GenerateToken(u)
 	if err != nil {
 		global.Logger.Errorf(c, "app.GenerateToken err: %v", err)
-		response.ToErrorResponse(errcode.UnauthorizedTokenGenerate)
+		response.ToErrorResponse(errcode.UnauthorizedTokenGenerate.WithDetails(err.Error()))
+		return
+	}
+	//将token存储到redis
+	err = app.SaveAuth(u.UserId, td)
+	if err != nil {
+		global.Logger.Errorf(c, "app.SaveAuth err: %v", err)
+		response.ToErrorResponse(errcode.UnauthorizedTokenGenerate.WithDetails(err.Error()))
 		return
 	}
 	data := gin.H{
-		"id":       spManager.MgID,
-		"rid":      spManager.RoleID,
-		"username": spManager.MgName,
-		"mobile":   spManager.MgMobile,
-		"email":    spManager.MgEmail,
-		"token":    token,
+		"id":            spManager.MgID,
+		"rid":           spManager.RoleID,
+		"username":      spManager.MgName,
+		"mobile":        spManager.MgMobile,
+		"email":         spManager.MgEmail,
+		"token":         td.AccessToken,
+		"refresh_token": td.RefreshToken,
 	}
 	response.ToResponse(data, "登陆成功", http.StatusOK)
+}
+
+func (s SpManagerController) Logout(c *gin.Context) {
+	response := app.NewResponse(c)
+	uuid, _ := c.Get("accessUuid")
+	_, delErr := app.DeleteAuth(uuid.(string))
+	if delErr != nil{
+		global.Logger.Errorf(c, "SpManagerService.Logout errs: %v", delErr)
+		response.ToErrorResponse(errcode.ErrorLogoutUserFail)
+		return
+	}
+	response.ToResponse(gin.H{}, "退出成功", http.StatusOK)
 }
 
 func (s SpManagerController) Users(c *gin.Context) {

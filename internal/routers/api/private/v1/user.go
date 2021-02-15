@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 	"superTools-background/global"
 	"superTools-background/internal/service"
 	"superTools-background/pkg/app"
@@ -48,7 +49,11 @@ func (u UserController) Login(c *gin.Context) {
 		response.ToErrorResponse(errcode.ErrorUserSignInFail)
 		return
 	}
-	token, err := app.GenerateTokenByUserName(user.UserName)
+	intId, _ := strconv.Atoi(user.ID)
+	tokenUser := app.User{
+		UserId: intId,
+	}
+	token, err := app.GenerateToken(tokenUser)
 	if err != nil {
 		global.Logger.Errorf(c, "app.GenerateToken err: %v", err)
 		response.ToErrorResponse(errcode.UnauthorizedTokenGenerate)

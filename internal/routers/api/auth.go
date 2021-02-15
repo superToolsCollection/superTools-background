@@ -49,14 +49,14 @@ func (controller *AuthController) GetAuth(c *gin.Context) {
 		return
 	}
 
-	token, err := app.GenerateToken(param.AppKey, param.AppSecret)
-	if err != nil {
-		global.Logger.Errorf(c, "app.GenerateToken err: %v", err)
-		response.ToErrorResponse(errcode.UnauthorizedTokenGenerate)
-		return
-	}
+	//token, err := app.GenerateToken(param.AppKey, param.AppSecret)
+	//if err != nil {
+	//	global.Logger.Errorf(c, "app.GenerateToken err: %v", err)
+	//	response.ToErrorResponse(errcode.UnauthorizedTokenGenerate)
+	//	return
+	//}
 
 	response.ToResponse(gin.H{
-		"token": token,
+		"token": "",
 	}, "获取token成功", http.StatusOK)
 }

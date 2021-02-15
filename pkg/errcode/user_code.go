@@ -16,4 +16,5 @@ var (
 	ErrorGetUserByID         = NewError(20060007, "获取用户信息失败")
 	ErrorDeleteUser          = NewError(20060008, "删除用户信息失败")
 	ErrorUpdateUserInfo      = NewError(20060009, "更新用户信息失败")
+	ErrorLogoutUserFail      = NewError(20060010, "用户退出失败")
 )
