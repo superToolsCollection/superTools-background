@@ -68,6 +68,7 @@ func JWT() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		//todo: 完善jwt校验
 		c.Set("accessUuid", user.AccessUuid)
 		c.Next()
 	}
